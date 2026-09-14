@@ -1,0 +1,75 @@
+{
+  "duration": 153.1,
+  "turns": [
+    {
+      "id": "hero-turn-1",
+      "speakerId": "sarah-lin",
+      "startTime": 0.0,
+      "endTime": 22.7,
+      "text": "Thanks for jumping on the line, David and Elena. I know Acme is exploring transitioning your real-time inference pipeline off your internal vLLM cluster onto CloudScale. To make the best use of our thirty minutes, I'd love to walk through your latency targets, touch on SOC2 and HIPAA compliance requirements, and then review our dedicated VPC endpoints and pricing tiers."
+    },
+    {
+      "id": "hero-turn-2",
+      "speakerId": "david-chen",
+      "startTime": 22.7,
+      "endTime": 48.1,
+      "text": "Thanks Sarah. To give you some context on our side: right now our engineering teams are hitting serious GPU bottlenecks during peak morning traffic. We're seeing p99 latency spike well over 450 milliseconds, which is degrading our customer search experiences. If CloudScale can guarantee p99 under 80 milliseconds at 10,000 requests per minute with automatic failover, that would be a game changer for us."
+    },
+    {
+      "id": "hero-turn-3",
+      "speakerId": "sarah-lin",
+      "startTime": 48.1,
+      "endTime": 67.2,
+      "text": "That is right in our sweet spot, David. Our enterprise clusters run across dedicated H100 pods with sub-50 millisecond time-to-first-token latency. We also provide isolated VPC peering and zero data-retention SLAs so your queries never touch public networks or train foundational models."
+    },
+    {
+      "id": "hero-turn-4",
+      "speakerId": "elena-rostova",
+      "startTime": 67.2,
+      "endTime": 83.5,
+      "text": "Sarah, on the compliance side: since Acme handles healthcare provider data, we require signed HIPAA Business Associate Agreements and SOC2 Type II certifications covering all underlying inference endpoints. Can your legal team provide those prior to our security review?"
+    },
+    {
+      "id": "hero-turn-5",
+      "speakerId": "sarah-lin",
+      "startTime": 83.5,
+      "endTime": 99.0,
+      "text": "Absolutely, Elena. I will personally send over our SOC2 Type II audit packet and our standard HIPAA BAA agreement by Wednesday end of day. We're already deployed in several tier-one health systems, so our compliance posture is turnkey."
+    },
+    {
+      "id": "hero-turn-6",
+      "speakerId": "elena-rostova",
+      "startTime": 99.0,
+      "endTime": 108.3,
+      "text": "That's great to hear. Once I review the SOC2 audit, I'll initiate our vendor security questionnaire in OneTrust so we can clear the compliance hurdle."
+    },
+    {
+      "id": "hero-turn-7",
+      "speakerId": "david-chen",
+      "startTime": 108.3,
+      "endTime": 122.6,
+      "text": "And on my end, I'd like to benchmark your endpoints directly against our current vLLM setup using our actual customer payload distributions. If the benchmark passes our 80-millisecond threshold, we are prepared to move into a two-week paid pilot."
+    },
+    {
+      "id": "hero-turn-8",
+      "speakerId": "sarah-lin",
+      "startTime": 122.6,
+      "endTime": 142.4,
+      "text": "Perfect. I will issue your engineering team dedicated API sandbox credentials with 10,000 RPM capacity today. I'll also prepare a formal commercial proposal with our 20% annual volume commitment discount for Elena to review. Let's reconvene next Tuesday to review the benchmark results."
+    },
+    {
+      "id": "hero-turn-9",
+      "speakerId": "david-chen",
+      "startTime": 142.4,
+      "endTime": 148.4,
+      "text": "Sounds like a solid plan, Sarah. Looking forward to testing the sandbox."
+    },
+    {
+      "id": "hero-turn-10",
+      "speakerId": "elena-rostova",
+      "startTime": 148.4,
+      "endTime": 153.0,
+      "text": "Thanks Sarah. Looking forward to receiving the documentation."
+    }
+  ]
+}
