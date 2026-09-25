@@ -181,24 +181,24 @@ export const MeetingDetailPage: React.FC = () => {
         </div>
 
         {/* Right Mode Switcher (Product-oriented labels preserving QA selectors) */}
-        <div className="flex items-center gap-1 bg-[#0B0C0E] p-1 border border-[#1E2127] overflow-x-auto font-mono">
+        <div className="flex items-center gap-1 bg-[#0B0C0E] p-1 border border-[#1E2127] rounded-md overflow-x-auto">
           <button
             onClick={() => setActiveTab('transcript')}
-            className={`flex items-center gap-1.5 px-3 py-1 text-xs transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded transition-colors ${
               activeTab === 'transcript'
                 ? 'bg-[#C7F36B] text-[#0B0C0E] font-semibold'
                 : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]'
             }`}
           >
             <span>Transcript</span>
-            <span className="text-[10px] opacity-80">
+            <span className="text-[10px] font-mono opacity-80">
               [{meeting.transcript.length}]
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('summary')}
-            className={`flex items-center gap-1.5 px-3 py-1 text-xs transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded transition-colors ${
               activeTab === 'summary'
                 ? 'bg-[#C7F36B] text-[#0B0C0E] font-semibold'
                 : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]'
@@ -209,7 +209,7 @@ export const MeetingDetailPage: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('actions')}
-            className={`flex items-center gap-1.5 px-3 py-1 text-xs transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded transition-colors ${
               activeTab === 'actions'
                 ? 'bg-[#C7F36B] text-[#0B0C0E] font-semibold'
                 : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]'
@@ -217,7 +217,7 @@ export const MeetingDetailPage: React.FC = () => {
           >
             <span>Follow-ups / Tasks</span>
             {pendingActions > 0 && (
-              <span className="text-[10px] opacity-90">
+              <span className="text-[10px] font-mono opacity-90">
                 [{pendingActions}]
               </span>
             )}
@@ -225,14 +225,14 @@ export const MeetingDetailPage: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('clips')}
-            className={`flex items-center gap-1.5 px-3 py-1 text-xs transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded transition-colors ${
               activeTab === 'clips'
                 ? 'bg-[#C7F36B] text-[#0B0C0E] font-semibold'
                 : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]'
             }`}
           >
             <span>Highlights / Clips</span>
-            <span className="text-[10px] opacity-80">
+            <span className="text-[10px] font-mono opacity-80">
               [{meeting.clips.length}]
             </span>
           </button>

@@ -19,44 +19,32 @@ interface ConversationMapProps {
   meeting: Meeting;
 }
 
-export const SEMANTIC_EVENT_STYLES: Record<
+export const SEMANTIC_EVENT_COLORS: Record<
   SemanticEventType,
   {
     dot: string;
     text: string;
-    border: string;
-    bg: string;
   }
 > = {
   Topic: {
     dot: 'bg-[#C7F36B]',
     text: 'text-[#C7F36B]',
-    border: 'border-[#C7F36B]/50',
-    bg: 'bg-[#C7F36B]/10',
   },
   Question: {
     dot: 'bg-[#5BA3F5]',
     text: 'text-[#5BA3F5]',
-    border: 'border-[#5BA3F5]/50',
-    bg: 'bg-[#5BA3F5]/10',
   },
   Decision: {
     dot: 'bg-[#F0B449]',
     text: 'text-[#F0B449]',
-    border: 'border-[#F0B449]/50',
-    bg: 'bg-[#F0B449]/10',
   },
   Action: {
     dot: 'bg-[#47D18C]',
     text: 'text-[#47D18C]',
-    border: 'border-[#47D18C]/50',
-    bg: 'bg-[#47D18C]/10',
   },
   Risk: {
     dot: 'bg-[#F26464]',
     text: 'text-[#F26464]',
-    border: 'border-[#F26464]/50',
-    bg: 'bg-[#F26464]/10',
   },
 };
 
@@ -72,7 +60,7 @@ export const ConversationMap: React.FC<ConversationMapProps> = ({ meeting }) => 
 
     const mapped: ConversationMapEvent[] = [];
 
-    // 1. Derive structural spine stages from chapters or transcript turns
+    // Derive structural spine stages from chapters or transcript
     const stageLabels = ['INTRO', 'TOPIC', 'PAIN', 'ARCHITECTURE', 'DECISION', 'FOLLOW-UP'];
     const chapters = meeting.chapters || [];
 
@@ -108,7 +96,7 @@ export const ConversationMap: React.FC<ConversationMapProps> = ({ meeting }) => 
       });
     });
 
-    // 2. Enrich with semantic events from highlights & action items so all 5 semantic types are represented
+    // Enrich with highlights
     meeting.highlights?.forEach((hl) => {
       let type: SemanticEventType = 'Decision';
       let stageCode = 'DECISION';
@@ -138,7 +126,7 @@ export const ConversationMap: React.FC<ConversationMapProps> = ({ meeting }) => 
       }
     });
 
-    // 3. Add question turns if none explicitly added yet
+    // Add key questions if needed
     meeting.transcript.forEach((turn) => {
       if (turn.text.includes('?') && !mapped.some((m) => Math.abs(m.timestamp - turn.startTime) < 5)) {
         mapped.push({
@@ -153,7 +141,7 @@ export const ConversationMap: React.FC<ConversationMapProps> = ({ meeting }) => 
       }
     });
 
-    // 4. Add action item timestamps
+    // Add action items
     meeting.actionItems.slice(0, 2).forEach((act) => {
       if (!mapped.some((m) => Math.abs(m.timestamp - act.timestamp) < 5)) {
         mapped.push({
@@ -177,21 +165,20 @@ export const ConversationMap: React.FC<ConversationMapProps> = ({ meeting }) => 
   };
 
   return (
-    <div className="bg-[#121417] border border-[#1E2127] px-4 py-3 select-none">
-      {/* Top Row: Signature Label + Semantic Legend */}
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+    <div className="bg-[#121417] border border-[#1E2127] rounded-lg px-4 py-3 select-none">
+      {/* Header Label + Legend */}
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-[#1E2127]/60 mb-2.5">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 bg-[#C7F36B]" />
-          <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-[#C7F36B] font-semibold">
+          <span className="text-xs font-semibold text-[#F2EFE8]">
             Conversation Map
           </span>
-          <span className="text-[10px] font-mono text-[#5E626B] hidden sm:inline">
-            — Structural spine & semantic events (click any node to seek audio)
+          <span className="text-xs text-[#5E626B] hidden sm:inline">
+            — navigation structure & key moments
           </span>
         </div>
 
-        {/* Semantic Event Color Legend */}
-        <div className="flex items-center gap-3 text-[10px] font-mono text-[#969AA3]">
+        {/* Semantic Color Indicators */}
+        <div className="flex items-center gap-3 text-xs text-[#969AA3]">
           {(
             [
               { type: 'Topic', color: 'bg-[#C7F36B]' },
@@ -201,18 +188,18 @@ export const ConversationMap: React.FC<ConversationMapProps> = ({ meeting }) => 
               { type: 'Risk', color: 'bg-[#F26464]' },
             ] as const
           ).map((item) => (
-            <span key={item.type} className="inline-flex items-center gap-1">
-              <span className={`w-1.5 h-1.5 ${item.color}`} />
-              <span>{item.type}</span>
+            <span key={item.type} className="inline-flex items-center gap-1.5">
+              <span className={`w-1.5 h-1.5 rounded-full ${item.color}`} />
+              <span className="text-[11px]">{item.type}</span>
             </span>
           ))}
         </div>
       </div>
 
-      {/* Structural Spine: INTRO ─── TOPIC ───── PAIN ─── DEMO ───── DECISION ─── FOLLOW-UP */}
-      <div className="flex items-center overflow-x-auto pb-1 gap-0">
+      {/* Connected Navigation Structure (unboxed, thin rail & event pins) */}
+      <div className="flex items-center overflow-x-auto py-1 gap-2 sm:gap-3">
         {events.map((ev, idx) => {
-          const style = SEMANTIC_EVENT_STYLES[ev.type];
+          const style = SEMANTIC_EVENT_COLORS[ev.type];
           const nextEv = events[idx + 1];
           const isCurrent =
             currentTime >= ev.timestamp &&
@@ -223,34 +210,38 @@ export const ConversationMap: React.FC<ConversationMapProps> = ({ meeting }) => 
               <button
                 onClick={() => handleJump(ev.timestamp)}
                 title={`${ev.type}: ${ev.label} (${formatTime(ev.timestamp)})`}
-                className={`group flex flex-col items-start px-2.5 py-1.5 border transition-colors flex-shrink-0 text-left ${
-                  isCurrent
-                    ? `bg-[#191C20] ${style.border}`
-                    : 'bg-[#0B0C0E] border-[#1E2127] hover:bg-[#191C20] hover:border-[#272B33]'
+                className={`group flex items-start gap-2 py-1 px-1.5 rounded transition-colors text-left flex-shrink-0 ${
+                  isCurrent ? 'bg-[#191C20]' : 'hover:bg-[#191C20]/60'
                 }`}
               >
-                <div className="flex items-center gap-1.5">
-                  <span className={`w-1.5 h-1.5 ${style.dot}`} />
-                  <span
-                    className={`font-mono text-[10px] font-semibold tracking-[0.12em] uppercase ${
-                      isCurrent ? style.text : 'text-[#F2EFE8] group-hover:text-[#C7F36B]'
-                    }`}
-                  >
+                <span
+                  className={`w-2 h-2 rounded-full mt-1 flex-shrink-0 ${style.dot} ${
+                    isCurrent ? 'ring-2 ring-[#C7F36B]/40' : ''
+                  }`}
+                />
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-baseline gap-1.5">
+                    <span
+                      className={`text-xs font-semibold truncate max-w-[125px] ${
+                        isCurrent
+                          ? 'text-[#C7F36B]'
+                          : 'text-[#F2EFE8] group-hover:text-[#C7F36B]'
+                      }`}
+                    >
+                      {ev.label}
+                    </span>
+                    <span className="font-mono text-[10px] text-[#5E626B]">
+                      {formatTime(ev.timestamp)}
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-[#969AA3] font-normal">
                     {ev.stageCode}
                   </span>
-                  <span className="font-mono text-[9px] text-[#5E626B] ml-1">
-                    {formatTime(ev.timestamp)}
-                  </span>
                 </div>
-                <span className="text-[11px] text-[#969AA3] group-hover:text-[#F2EFE8] truncate max-w-[132px] mt-0.5">
-                  {ev.label}
-                </span>
               </button>
 
               {idx < events.length - 1 && (
-                <div className="w-4 sm:w-6 h-[1px] bg-[#272B33] flex-shrink-0 relative flex items-center justify-center">
-                  <span className="text-[8px] font-mono text-[#5E626B] select-none">─</span>
-                </div>
+                <div className="w-3 sm:w-4 h-[1px] bg-[#272B33] flex-shrink-0" />
               )}
             </React.Fragment>
           );
