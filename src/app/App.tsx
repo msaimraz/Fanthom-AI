@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Sidebar } from '../components/layout/Sidebar';
 import { Navbar } from '../components/layout/Navbar';
@@ -6,9 +6,16 @@ import { GlobalSearchModal } from '../components/layout/GlobalSearchModal';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { MeetingDetailPage } from '../features/detail/MeetingDetailPage';
 import { ShareClipPage } from '../features/clips/ShareClipPage';
+import { useMeetingsStore } from '../store/useMeetingsStore';
 
 export const App: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { loadWorkspaceData } = useMeetingsStore();
+
+  useEffect(() => {
+    loadWorkspaceData();
+  }, [loadWorkspaceData]);
+
 
   return (
     <Routes>
@@ -19,7 +26,7 @@ export const App: React.FC = () => {
       <Route
         path="*"
         element={
-          <div className="flex h-screen w-screen bg-[#0a0b0d] text-zinc-100 overflow-hidden font-sans antialiased">
+          <div className="flex h-screen w-screen bg-[#101114] text-[#F4F3EF] overflow-hidden font-sans antialiased">
             {/* Sidebar navigation */}
             <Sidebar onOpenSearch={() => setIsSearchOpen(true)} />
 

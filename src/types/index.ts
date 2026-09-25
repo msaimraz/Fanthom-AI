@@ -104,3 +104,22 @@ export interface SummaryTemplate {
   iconName: string;
 }
 
+export interface Workspace {
+  id: string;
+  slug: string;
+  name: string;
+  plan: string;
+}
+
+export interface UserProfile {
+  id: string;
+  workspaceId: string;
+  slug: string;
+  name: string;
+  email: string;
+  roleTitle: string;
+  avatarUrl: string;
+  isActive: boolean;
+}
+
+

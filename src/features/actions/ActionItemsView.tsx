@@ -31,37 +31,37 @@ export const ActionItemsView: React.FC<ActionItemsViewProps> = ({ meeting }) => 
   const getCategoryColor = (category?: string) => {
     switch (category) {
       case 'Technical':
-        return 'bg-blue-500/10 text-blue-300 border-blue-500/20';
+        return 'bg-[#8B7CF6]/10 text-[#8B7CF6] border-[#8B7CF6]/25';
       case 'Contract':
-        return 'bg-amber-500/10 text-amber-300 border-amber-500/20';
+        return 'bg-[#E7B45C]/10 text-[#E7B45C] border-[#E7B45C]/25';
       case 'Product':
-        return 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20';
+        return 'bg-indigo-500/10 text-indigo-300 border-indigo-500/25';
       default:
-        return 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20';
+        return 'bg-[#55C89A]/10 text-[#55C89A] border-[#55C89A]/25';
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#111217] border border-[#1d1f28] rounded-xl overflow-hidden">
+    <div className="flex flex-col h-full bg-[#17191D] border border-[#23262D] rounded-xl overflow-hidden">
       {/* Header with progress */}
-      <div className="p-3 border-b border-[#181a24] bg-[#0e0f15] flex items-center justify-between gap-3">
+      <div className="p-3.5 border-b border-[#23262D] bg-[#17191D] flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-cyan-400" />
-          <span className="text-xs font-semibold text-zinc-200">Action Items</span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161822] text-zinc-400 border border-[#202330]">
+          <CheckCircle2 className="w-4 h-4 text-[#55C89A]" />
+          <span className="text-xs font-semibold text-[#F4F3EF]">Follow-ups & Action Items</span>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#101114] text-[#A7A9B0] border border-[#23262D]">
             {completedCount}/{totalCount}
           </span>
         </div>
 
         {/* Progress bar */}
         <div className="flex items-center gap-2.5 w-32">
-          <div className="flex-1 h-1.5 bg-[#1a1c26] rounded-full overflow-hidden shadow-inner">
+          <div className="flex-1 h-1.5 bg-[#101114] rounded-full overflow-hidden">
             <div
-              className="h-full bg-cyan-400 transition-all duration-300 shadow-[0_0_6px_#00d2ee]"
+              className="h-full bg-[#55C89A] transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <span className="text-[10px] font-mono text-cyan-300 font-semibold">
+          <span className="text-[10px] font-mono text-[#55C89A] font-semibold">
             {Math.round(progressPercent)}%
           </span>
         </div>
@@ -75,10 +75,10 @@ export const ActionItemsView: React.FC<ActionItemsViewProps> = ({ meeting }) => 
           return (
             <div
               key={action.id}
-              className={`p-3.5 rounded-xl border transition-all duration-150 flex flex-col gap-2.5 shadow-sm ${
+              className={`p-3.5 rounded-xl border transition-all duration-150 flex flex-col gap-2.5 ${
                 action.completed
-                  ? 'bg-[#0d0e14]/60 border-[#181a24] opacity-65'
-                  : 'bg-[#10121a] border-[#1e212e] hover:border-cyan-500/30'
+                  ? 'bg-[#101114]/60 border-[#23262D] opacity-65'
+                  : 'bg-[#101114] border-[#23262D] hover:border-[#8B7CF6]/40'
               }`}
             >
               {/* Checkbox & Task text */}
@@ -86,19 +86,19 @@ export const ActionItemsView: React.FC<ActionItemsViewProps> = ({ meeting }) => 
                 <button
                   onClick={() => toggleActionItem(meeting.id, action.id)}
                   title={action.completed ? 'Mark as incomplete' : 'Mark as completed'}
-                  className="mt-0.5 flex-shrink-0 text-zinc-500 hover:text-cyan-400 transition-transform active:scale-90"
+                  className="mt-0.5 flex-shrink-0 text-[#6F737D] hover:text-[#8B7CF6] transition-transform active:scale-90"
                 >
                   {action.completed ? (
-                    <CheckSquare className="w-4.5 h-4.5 text-cyan-400 fill-cyan-950/40" />
+                    <CheckSquare className="w-4.5 h-4.5 text-[#55C89A] fill-[#55C89A]/20" />
                   ) : (
-                    <Square className="w-4.5 h-4.5 text-zinc-600 hover:text-zinc-400" />
+                    <Square className="w-4.5 h-4.5 text-[#6F737D] hover:text-[#A7A9B0]" />
                   )}
                 </button>
 
                 <div className="flex-1 min-w-0">
                   <p
                     className={`text-[13px] leading-relaxed ${
-                      action.completed ? 'line-through text-zinc-500' : 'text-zinc-100 font-medium'
+                      action.completed ? 'line-through text-[#6F737D]' : 'text-[#F4F3EF] font-medium'
                     }`}
                   >
                     {action.text}
@@ -108,18 +108,18 @@ export const ActionItemsView: React.FC<ActionItemsViewProps> = ({ meeting }) => 
 
               {/* Context quote */}
               {action.contextQuote && (
-                <div className="ml-7 pl-2.5 border-l-2 border-[#222638] text-xs text-zinc-400 italic leading-snug flex items-center gap-1.5">
-                  <Quote className="w-3 h-3 text-zinc-600 flex-shrink-0" />
+                <div className="ml-7 pl-2.5 border-l-2 border-[#23262D] text-xs text-[#A7A9B0] italic leading-snug flex items-center gap-1.5">
+                  <Quote className="w-3 h-3 text-[#6F737D] flex-shrink-0" />
                   <span className="line-clamp-1">"{action.contextQuote}"</span>
                 </div>
               )}
 
               {/* Meta tags & Jump to quote button */}
-              <div className="ml-7 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#181a25]">
+              <div className="ml-7 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#23262D]/60">
                 {/* Assignee & Category */}
                 <div className="flex items-center gap-2">
                   {assignee && (
-                    <div className="flex items-center gap-1.5 text-xs text-zinc-300 bg-[#151722] px-2 py-0.5 rounded-full border border-[#202434]">
+                    <div className="flex items-center gap-1.5 text-xs text-[#F4F3EF] bg-[#17191D] px-2 py-0.5 rounded-full border border-[#23262D]">
                       <img
                         src={assignee.avatarUrl}
                         alt={assignee.name}
@@ -141,7 +141,7 @@ export const ActionItemsView: React.FC<ActionItemsViewProps> = ({ meeting }) => 
                     </span>
                   )}
 
-                  <span className="text-[10px] font-mono text-zinc-500">
+                  <span className="text-[10px] font-mono text-[#6F737D]">
                     {Math.round(action.confidence * 100)}% conf
                   </span>
                 </div>
@@ -153,7 +153,7 @@ export const ActionItemsView: React.FC<ActionItemsViewProps> = ({ meeting }) => 
                     play();
                   }}
                   title={`Seek to ${formatTime(action.timestamp)}`}
-                  className="flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#161824] hover:bg-cyan-500/20 hover:text-cyan-300 text-zinc-400 border border-[#242838] hover:border-cyan-500/30 transition-colors ml-auto shadow-sm"
+                  className="flex items-center gap-1.5 text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-[#17191D] hover:bg-[#8B7CF6]/15 hover:text-[#8B7CF6] text-[#A7A9B0] border border-[#23262D] hover:border-[#8B7CF6]/35 transition-colors ml-auto"
                 >
                   <Play className="w-2.5 h-2.5 fill-current" />
                   <span>Jump to quote [{formatTime(action.timestamp)}]</span>
@@ -164,7 +164,7 @@ export const ActionItemsView: React.FC<ActionItemsViewProps> = ({ meeting }) => 
         })}
 
         {meeting.actionItems.length === 0 && (
-          <div className="py-16 text-center text-xs text-zinc-500">
+          <div className="py-16 text-center text-xs text-[#6F737D]">
             No action items recorded for this meeting.
           </div>
         )}

@@ -53,23 +53,23 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 select-none">
-      <div className="w-full max-w-lg bg-[#111217] border border-[#222532] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
+      <div className="w-full max-w-lg bg-[#17191D] border border-[#23262D] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="p-3.5 border-b border-[#1c1e27] flex items-center justify-between bg-[#14161f]">
+        <div className="p-3.5 border-b border-[#23262D] flex items-center justify-between bg-[#17191D]">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-md bg-[#8B7CF6]/15 text-[#8B7CF6] flex items-center justify-center">
               <Share2 className="w-3.5 h-3.5" />
             </div>
             <div>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">Share Clip</h3>
-              <p className="text-[10px] text-zinc-400 font-mono">
+              <h3 className="text-xs font-bold text-[#F4F3EF] uppercase tracking-wider">Share Clip</h3>
+              <p className="text-[10px] text-[#A7A9B0] font-mono">
                 {formatTime(clip.startTime)} – {formatTime(clip.endTime)}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-zinc-400 hover:text-white rounded"
+            className="p-1 text-[#A7A9B0] hover:text-[#F4F3EF] rounded"
           >
             <X className="w-4 h-4" />
           </button>
@@ -78,10 +78,10 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
         {/* Body */}
         <div className="p-4 space-y-3.5">
           {/* Clip preview title */}
-          <div className="p-2.5 bg-[#0a0b0e] border border-[#1e202b] rounded-lg">
-            <h4 className="text-xs font-semibold text-zinc-200 mb-0.5">{clip.title}</h4>
+          <div className="p-2.5 bg-[#101114] border border-[#23262D] rounded-lg">
+            <h4 className="text-xs font-semibold text-[#F4F3EF] mb-0.5">{clip.title}</h4>
             {clip.quote && (
-              <p className="text-[11px] text-zinc-400 italic line-clamp-2">
+              <p className="text-[11px] text-[#A7A9B0] italic line-clamp-2">
                 "{clip.quote}"
               </p>
             )}
@@ -89,7 +89,7 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
 
           {/* Share Link Row */}
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 mb-1">
+            <label className="block text-xs font-semibold text-[#F4F3EF] mb-1">
               Link
             </label>
             <div className="flex items-center gap-2">
@@ -97,11 +97,11 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
                 type="text"
                 readOnly
                 value={shareUrl}
-                className="flex-1 bg-[#0a0b0e] border border-[#222532] rounded-lg px-3 py-1.5 text-xs font-mono text-zinc-300 select-all focus:outline-none"
+                className="flex-1 bg-[#101114] border border-[#23262D] rounded-lg px-3 py-1.5 text-xs font-mono text-[#A7A9B0] select-all focus:outline-none"
               />
               <button
                 onClick={handleCopyLink}
-                className="flex items-center gap-1 px-3 py-1.5 bg-cyan-400 hover:bg-cyan-300 text-black rounded-lg text-xs font-semibold transition-all shadow-sm shadow-cyan-500/20"
+                className="flex items-center gap-1 px-3 py-1.5 bg-[#8B7CF6] hover:bg-[#9D91FF] text-white rounded-lg text-xs font-semibold transition-all shadow-sm shadow-[#8B7CF6]/20"
               >
                 {copied ? (
                   <>
@@ -120,7 +120,7 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
 
           {/* Permissions Selector */}
           <div>
-            <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
+            <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] mb-1">
               Access
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -128,14 +128,14 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
                 onClick={() => setAccessLevel('public')}
                 className={`p-2.5 rounded-lg border text-left flex items-start gap-2 transition-all ${
                   accessLevel === 'public'
-                    ? 'bg-cyan-950/20 border-cyan-500/40 text-white'
-                    : 'bg-[#0e0f14] border-[#1e202b] text-zinc-400 hover:text-zinc-200'
+                    ? 'bg-[#8B7CF6]/15 border-[#8B7CF6]/40 text-[#F4F3EF]'
+                    : 'bg-[#101114] border-[#23262D] text-[#A7A9B0] hover:text-[#F4F3EF]'
                 }`}
               >
-                <Globe className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0 mt-0.5" />
+                <Globe className="w-3.5 h-3.5 text-[#8B7CF6] flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-semibold">Anyone with link</p>
-                  <p className="text-[10px] text-zinc-500">Public web preview</p>
+                  <p className="text-[10px] text-[#6F737D]">Public web preview</p>
                 </div>
               </button>
 
@@ -143,28 +143,28 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
                 onClick={() => setAccessLevel('workspace')}
                 className={`p-2.5 rounded-lg border text-left flex items-start gap-2 transition-all ${
                   accessLevel === 'workspace'
-                    ? 'bg-cyan-950/20 border-cyan-500/40 text-white'
-                    : 'bg-[#0e0f14] border-[#1e202b] text-zinc-400 hover:text-zinc-200'
+                    ? 'bg-[#8B7CF6]/15 border-[#8B7CF6]/40 text-[#F4F3EF]'
+                    : 'bg-[#101114] border-[#23262D] text-[#A7A9B0] hover:text-[#F4F3EF]'
                 }`}
               >
-                <Lock className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
+                <Lock className="w-3.5 h-3.5 text-[#E7B45C] flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-semibold">Workspace only</p>
-                  <p className="text-[10px] text-zinc-500">Requires login</p>
+                  <p className="text-[10px] text-[#6F737D]">Requires login</p>
                 </div>
               </button>
             </div>
           </div>
 
           {/* Embed Option */}
-          <div className="pt-2 border-t border-[#1c1e27] flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs text-zinc-400">
-              <Code className="w-3 h-3 text-zinc-500" />
+          <div className="pt-2 border-t border-[#23262D] flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs text-[#A7A9B0]">
+              <Code className="w-3 h-3 text-[#6F737D]" />
               <span>HTML Video Embed</span>
             </div>
             <button
               onClick={handleCopyEmbed}
-              className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors font-medium"
+              className="text-xs text-[#8B7CF6] hover:text-[#9D91FF] transition-colors font-medium"
             >
               {embedCopied ? 'Embed Copied!' : 'Copy Embed Code'}
             </button>
@@ -172,10 +172,10 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-3.5 border-t border-[#1c1e27] bg-[#14161f] flex items-center justify-between">
+        <div className="p-3.5 border-t border-[#23262D] bg-[#17191D] flex items-center justify-between">
           <button
             onClick={handleOpenPage}
-            className="flex items-center gap-1 text-xs font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
+            className="flex items-center gap-1 text-xs font-medium text-[#8B7CF6] hover:text-[#9D91FF] transition-colors"
           >
             <span>Open Public Clip Page</span>
             <ExternalLink className="w-3 h-3" />
@@ -183,7 +183,7 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
 
           <button
             onClick={onClose}
-            className="px-3 py-1 text-xs font-semibold bg-[#1c1e28] hover:bg-[#252834] text-zinc-200 rounded-md transition-colors"
+            className="px-3 py-1 text-xs font-semibold bg-[#1D2025] hover:bg-[#23262D] text-[#F4F3EF] rounded-md transition-colors"
           >
             Done
           </button>

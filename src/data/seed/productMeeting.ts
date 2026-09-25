@@ -2,7 +2,7 @@ import { Meeting } from '../../types';
 
 export const productMeeting: Meeting = {
   id: 'product-sync-mobile-app',
-  title: 'Q4 Product Strategy & Design Sync: Fathom Mobile App',
+  title: 'Q4 Product Strategy & Design Sync: Fanthom Mobile App',
   date: '2026-09-13T16:00:00Z',
   durationSeconds: 165,
   category: 'team',
@@ -14,27 +14,27 @@ export const productMeeting: Meeting = {
     {
       id: 'jessica-wu',
       name: 'Jessica Wu',
-      email: 'jessica@fathom.design',
+      email: 'jessica@fanthom.ai',
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop&crop=face',
       role: 'Head of Product',
-      company: 'Fathom Labs',
+      company: 'Fanthom Labs',
       isHost: true,
     },
     {
       id: 'liam-oconnor',
       name: "Liam O'Connor",
-      email: 'liam@fathom.design',
+      email: 'liam@fanthom.ai',
       avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=128&h=128&fit=crop&crop=face',
       role: 'Lead Product Designer',
-      company: 'Fathom Labs',
+      company: 'Fanthom Labs',
     },
     {
       id: 'ben-miller',
       name: 'Ben Miller',
-      email: 'ben@fathom.design',
+      email: 'ben@fanthom.ai',
       avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=128&h=128&fit=crop&crop=face',
       role: 'iOS Tech Lead',
-      company: 'Fathom Labs',
+      company: 'Fanthom Labs',
     },
   ],
   summaries: {

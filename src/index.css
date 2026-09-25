@@ -2,23 +2,26 @@
 
 @layer base {
   :root {
-    --bg-primary: #0a0b0d;
-    --bg-surface: #101116;
-    --bg-surface-hover: #161822;
-    --bg-elevated: #151720;
-    --border-subtle: #1c1e27;
-    --border-strong: #282b38;
-    --accent-cyan: #00d2ee;
-    --accent-cyan-hover: #38e1f7;
+    --bg-primary: #101114;
+    --bg-surface: #17191D;
+    --bg-surface-hover: #1D2025;
+    --bg-elevated: #1D2025;
+    --border-subtle: #23262D;
+    --border-strong: #2C3039;
+    --accent-iris: #8B7CF6;
+    --accent-iris-hover: #9D91FF;
+    --text-primary: #F4F3EF;
+    --text-secondary: #A7A9B0;
+    --text-muted: #6F737D;
   }
 
   * {
-    border-color: #1c1e27;
+    border-color: #23262D;
   }
   
   body {
-    background-color: #0a0b0d;
-    color: #f3f4f6;
+    background-color: #101114;
+    color: #F4F3EF;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
@@ -27,7 +30,7 @@
   }
 }
 
-/* Custom sleek scrollbar for dense Fathom workspaces */
+/* Custom sleek scrollbar for Fanthom editorial workspace */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -36,15 +39,15 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #20222d;
+  background: #262930;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #313547;
+  background: #363A45;
 }
 
 /* Range input styling for volume and audio scrubber */
 input[type="range"] {
-  accent-color: #00d2ee;
+  accent-color: #8B7CF6;
 }
 

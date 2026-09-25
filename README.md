@@ -268,3 +268,57 @@ All 20 flows execute headlessly in Chrome/Edge and report:
 - `20 / 20 Tests Passed`
 - `0 Browser Console Errors`
 
+---
+
+## Backend
+
+Fanthom uses Supabase PostgreSQL and the Supabase API (`@supabase/supabase-js`) as its runtime data layer and source of truth.
+
+### 1. Create a Supabase Project
+1. Sign in to the [Supabase Dashboard](https://supabase.com/dashboard) and create a new PostgreSQL project.
+2. Navigate to **Project Settings → API** and copy your **Project URL** and **`anon` `public` API key**.
+
+### 2. Required Environment Variables
+Copy `.env.example` to `.env` in the repository root and provide your public project credentials:
+
+```bash
+cp .env.example .env
+```
+
+```env
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-public-anon-key
+```
+
+> **Security Note**: Never commit `.env` or expose your `service_role` secret key in any `VITE_` variable or browser code. Only the public `anon` key is used by the frontend.
+
+### 3. Run Database Migrations
+1. Open the **SQL Editor** in your Supabase Dashboard.
+2. Paste the contents of [`supabase/schema.sql`](./supabase/schema.sql) and click **Run**.
+3. This creates all 10 relational tables (`workspaces`, `profiles`, `meetings`, `participants`, `meeting_participants`, `transcript_segments`, `summaries`, `action_items`, `highlights`, and `clips`), foreign keys, search/timestamp indexes, and least-privilege Row Level Security (RLS) policies.
+
+### 4. Seed Demo Data
+Run the repeatable, non-destructive seed script to populate the demo workspace (`Fanthom Intelligence`), admin profile (`Sarah Lin — Workspace Admin`), and the 4 meetings with their participants, transcripts, summaries, action items, highlights, and clips:
+
+```bash
+npm run seed
+```
+
+Running `npm run seed` (`scripts/seed-supabase.ts`) uses `ON CONFLICT DO NOTHING` (`ignoreDuplicates: true`) so re-running it never creates duplicate rows, never overwrites completed action items, and never deletes user-created highlights or clips.
+
+### 5. Run Locally
+```bash
+npm run dev
+```
+
+### 6. How the Demo Workspace & RLS Security Model Work
+- All seeded meetings belong to a single deterministic demo workspace (`00000000-0000-4000-8000-000000000001`) and admin profile (`Sarah Lin — Workspace Admin`).
+- **Row Level Security (RLS)** is enabled on all 10 tables and scoped strictly to the demo workspace:
+  - Core reference tables (`workspaces`, `profiles`, `participants`, `meeting_participants`, `transcript_segments`, `summaries`) forbid anonymous `UPDATE` and `DELETE` operations.
+  - Interactive tables (`action_items`, `highlights`, `clips`) allow scoped reads and persisted user interactions (`UPDATE` on action item status, `INSERT` on highlights and clips, and `DELETE` restricted solely to non-seeded user-created clips).
+  - Public database reset is disabled in the UI to protect shared workspace state.
+
+### 7. Current Authentication Limitation
+This demo uses a public demo workspace without user authentication. Production authentication and stricter workspace authorization would be added before real customer deployment.
+
+

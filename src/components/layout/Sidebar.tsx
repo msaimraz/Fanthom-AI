@@ -1,15 +1,14 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
-  Video,
+  Layers,
   CheckSquare,
   Search,
   RotateCcw,
-  Sparkles,
   Zap,
   FolderOpen,
   Users,
-  ShieldAlert,
+  Terminal,
 } from 'lucide-react';
 import { useMeetingsStore } from '../../store/useMeetingsStore';
 
@@ -19,19 +18,21 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
   const navigate = useNavigate();
-  const { meetings, resetToDefaultSeed, setCategoryFilter } = useMeetingsStore();
+  const {
+    meetings,
+    profile,
+    workspace,
+    setCategoryFilter,
+  } = useMeetingsStore();
 
   const pendingActionCount = meetings.reduce(
     (acc, m) => acc + m.actionItems.filter((a) => !a.completed).length,
     0
   );
+  const customerCount = meetings.filter((m) => m.category === 'customer').length;
+  const teamCount = meetings.filter((m) => m.category === 'team').length;
+  const oneOnOneCount = meetings.filter((m) => m.category === 'one_on_one').length;
 
-  const handleReset = () => {
-    if (window.confirm('Reset meetings to default seed data?')) {
-      resetToDefaultSeed();
-      navigate('/meetings');
-    }
-  };
 
   const handleFilterNavigate = (category: any) => {
     setCategoryFilter(category);
@@ -39,45 +40,47 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
   };
 
   return (
-    <aside className="w-56 flex-shrink-0 bg-[#090a0e] border-r border-[#161822] flex flex-col justify-between h-screen select-none">
+    <aside className="w-[232px] flex-shrink-0 bg-[#17191D] border-r border-[#23262D] flex flex-col justify-between h-screen select-none">
       {/* Brand & Search */}
       <div className="flex flex-col">
-        {/* Fathom Brand Header */}
-        <div className="h-13 flex items-center justify-between px-4 border-b border-[#161822]">
+        {/* Fanthom Brand Header */}
+        <div className="h-14 flex items-center justify-between px-4 border-b border-[#23262D]">
           <div
-            className="flex items-center gap-2 cursor-pointer group"
+            className="flex items-center gap-2.5 cursor-pointer group"
             onClick={() => {
               setCategoryFilter('all');
               navigate('/meetings');
             }}
           >
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-sm shadow-cyan-500/25 transition-transform group-hover:scale-105">
-              <Sparkles className="w-3.5 h-3.5 text-black fill-black" />
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#8B7CF6] to-[#6355D8] flex items-center justify-center shadow-sm shadow-[#8B7CF6]/20 transition-transform group-hover:scale-105">
+              <span className="font-bold text-xs text-white font-mono">F</span>
             </div>
-            <div className="flex items-baseline gap-0.5">
-              <span className="font-bold text-sm tracking-tight text-white font-sans">
-                fathom
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm tracking-tight text-[#F4F3EF] leading-tight">
+                Fanthom
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 inline-block shadow-[0_0_6px_#00d2ee]" />
+              <span className="text-[10px] text-[#A7A9B0] tracking-wide leading-none">
+                Intelligence
+              </span>
             </div>
           </div>
 
-          <span className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#13151f] text-cyan-400 border border-cyan-500/20">
-            PRO
+          <span className="text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-[#1D2025] text-[#8B7CF6] border border-[#8B7CF6]/25 font-medium">
+            {workspace?.plan || 'Pro'}
           </span>
         </div>
 
         {/* Quick Search Trigger */}
-        <div className="px-3 pt-3">
+        <div className="px-3 pt-3.5 pb-1">
           <button
             onClick={onOpenSearch}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-zinc-400 bg-[#0f1016] hover:bg-[#141620] border border-[#1b1e2a] hover:border-[#282d3e] rounded-lg transition-all group shadow-inner"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs text-[#A7A9B0] bg-[#101114] hover:bg-[#1D2025] hover:text-[#F4F3EF] border border-[#23262D] hover:border-[#2C3039] rounded-lg transition-all group"
           >
             <div className="flex items-center gap-2 min-w-0">
-              <Search className="w-3.5 h-3.5 text-zinc-500 group-hover:text-cyan-400 transition-colors flex-shrink-0" />
-              <span className="text-[11px] text-zinc-400 truncate">Search calls...</span>
+              <Search className="w-3.5 h-3.5 text-[#6F737D] group-hover:text-[#8B7CF6] transition-colors flex-shrink-0" />
+              <span className="text-[11px] truncate">Search workspace...</span>
             </div>
-            <kbd className="text-[10px] bg-[#171924] text-zinc-400 px-1 py-0.5 rounded font-mono border border-[#222636] flex-shrink-0">
+            <kbd className="text-[10px] bg-[#1D2025] text-[#A7A9B0] px-1.5 py-0.5 rounded font-mono border border-[#282B33] flex-shrink-0">
               ⌘K
             </kbd>
           </button>
@@ -85,9 +88,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
 
         {/* Main Nav Links */}
         <nav className="p-3 space-y-1">
-          <div className="px-1 pb-1">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500 font-mono">
-              Main
+          <div className="px-1.5 pb-1 pt-1">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono">
+              Workspace
             </span>
           </div>
 
@@ -98,16 +101,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
             className={({ isActive }) =>
               `flex items-center justify-between px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                 isActive
-                  ? 'bg-cyan-500/10 text-cyan-300 font-semibold border border-cyan-500/30'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#12131b]'
+                  ? 'bg-[#8B7CF6]/15 text-[#F4F3EF] font-semibold border border-[#8B7CF6]/30'
+                  : 'text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025]'
               }`
             }
           >
             <div className="flex items-center gap-2">
-              <Video className="w-3.5 h-3.5 text-zinc-400" />
+              <Layers className="w-3.5 h-3.5 text-[#A7A9B0]" />
               <span>All Meetings</span>
             </div>
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#161822] text-zinc-400 font-mono">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#101114] text-[#A7A9B0] font-mono border border-[#23262D]">
               {meetings.length}
             </span>
           </NavLink>
@@ -116,75 +119,75 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
             onClick={() => {
               navigate('/meetings');
             }}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-[#12131b] rounded-lg transition-colors"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors text-left"
           >
             <div className="flex items-center gap-2">
-              <CheckSquare className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Action Items</span>
+              <CheckSquare className="w-3.5 h-3.5 text-[#A7A9B0]" />
+              <span>Follow-ups</span>
             </div>
             {pendingActionCount > 0 && (
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-cyan-500/15 text-cyan-300 font-semibold border border-cyan-500/30 font-mono">
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#8B7CF6]/15 text-[#8B7CF6] font-semibold border border-[#8B7CF6]/30 font-mono">
                 {pendingActionCount}
               </span>
             )}
           </button>
 
           {/* Smart Views / Categories */}
-          <div className="pt-3 px-1 pb-1">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500 font-mono">
-              Smart Views
+          <div className="pt-3 px-1.5 pb-1">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono">
+              Conversations
             </span>
           </div>
 
           <button
             onClick={() => handleFilterNavigate('customer')}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-[#12131b] rounded-lg transition-colors text-left"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors text-left"
           >
             <div className="flex items-center gap-2">
-              <FolderOpen className="w-3.5 h-3.5 text-cyan-400/80" />
+              <FolderOpen className="w-3.5 h-3.5 text-[#8B7CF6]/80" />
               <span className="truncate">Customer Deals</span>
             </div>
-            <span className="text-[10px] text-zinc-500 font-mono">1</span>
+            <span className="text-[10px] text-[#6F737D] font-mono">{customerCount}</span>
           </button>
 
           <button
             onClick={() => handleFilterNavigate('team')}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-[#12131b] rounded-lg transition-colors text-left"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors text-left"
           >
             <div className="flex items-center gap-2">
-              <ShieldAlert className="w-3.5 h-3.5 text-amber-400/80" />
+              <Terminal className="w-3.5 h-3.5 text-[#E7B45C]/80" />
               <span className="truncate">Engineering & Ops</span>
             </div>
-            <span className="text-[10px] text-zinc-500 font-mono">2</span>
+            <span className="text-[10px] text-[#6F737D] font-mono">{teamCount}</span>
           </button>
 
           <button
             onClick={() => handleFilterNavigate('one_on_one')}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-[#12131b] rounded-lg transition-colors text-left"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors text-left"
           >
             <div className="flex items-center gap-2">
-              <Users className="w-3.5 h-3.5 text-emerald-400/80" />
+              <Users className="w-3.5 h-3.5 text-[#55C89A]/80" />
               <span className="truncate">1-on-1 Reviews</span>
             </div>
-            <span className="text-[10px] text-zinc-500 font-mono">1</span>
+            <span className="text-[10px] text-[#6F737D] font-mono">{oneOnOneCount}</span>
           </button>
 
           {/* Hero Recording Pin */}
-          <div className="pt-3 px-1 pb-1">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500 font-mono">
-              Featured Hero
+          <div className="pt-3 px-1.5 pb-1">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono">
+              Highlighted Call
             </span>
           </div>
 
           <button
             onClick={() => navigate('/meetings/enterprise-sales-discovery-acme')}
-            className="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium text-zinc-300 hover:text-white bg-[#10121a] hover:bg-[#151824] border border-[#1b1e2c] hover:border-cyan-500/30 rounded-lg transition-all group text-left shadow-sm"
+            className="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium text-[#F4F3EF] bg-[#101114] hover:bg-[#1D2025] border border-[#23262D] hover:border-[#8B7CF6]/40 rounded-lg transition-all group text-left shadow-sm"
           >
-            <Zap className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0 animate-pulse" />
-            <span className="truncate text-[11px] font-medium text-zinc-200 group-hover:text-cyan-300">
-              Acme Sales Demo
+            <Zap className="w-3.5 h-3.5 text-[#8B7CF6] flex-shrink-0" />
+            <span className="truncate text-[11px] font-medium text-[#F4F3EF] group-hover:text-[#8B7CF6]">
+              Acme Discovery
             </span>
-            <span className="ml-auto text-[8px] px-1.5 py-0.2 rounded bg-cyan-500/10 text-cyan-400 font-mono border border-cyan-500/30 flex-shrink-0">
+            <span className="ml-auto text-[8px] px-1.5 py-0.5 rounded bg-[#8B7CF6]/15 text-[#8B7CF6] font-mono border border-[#8B7CF6]/25 flex-shrink-0">
               AUDIO
             </span>
           </button>
@@ -192,27 +195,38 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
       </div>
 
       {/* Footer Profile & Reset */}
-      <div className="p-3 border-t border-[#161822] space-y-2 bg-[#08090d]">
+      <div className="p-3 border-t border-[#23262D] space-y-2 bg-[#17191D]">
         <button
-          onClick={handleReset}
-          className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[10px] font-medium text-zinc-500 hover:text-zinc-300 hover:bg-[#12131b] rounded-md transition-all border border-transparent hover:border-[#1d202d]"
+          disabled
+          title="Database reset is disabled in the public shared demo workspace"
+          className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[11px] font-medium text-[#6F737D] bg-[#101114]/50 rounded-md border border-[#23262D]/60 cursor-not-allowed opacity-70"
         >
           <RotateCcw className="w-3 h-3" />
-          <span>Reset Demo Data</span>
+          <span>Reset Demo Data (Protected)</span>
         </button>
 
         {/* User Profile Tile */}
-        <div className="flex items-center gap-2.5 pt-1 px-1">
+        <div className="flex items-center gap-2.5 pt-1.5 px-1 border-t border-[#23262D]/60">
           <img
-            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=64&h=64&fit=crop&crop=face"
-            alt="Sarah Lin"
-            className="w-7 h-7 rounded-full border border-cyan-500/40 object-cover shadow-sm"
+            src={
+              profile?.avatarUrl ||
+              'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=64&h=64&fit=crop&crop=face'
+            }
+            alt={profile?.name || 'Sarah Lin'}
+            className="w-7 h-7 rounded-full border border-[#8B7CF6]/40 object-cover shadow-sm"
           />
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-zinc-200 truncate leading-tight">Sarah Lin</p>
-            <p className="text-[10px] text-zinc-500 truncate leading-tight">CloudScale HQ</p>
+            <p className="text-xs font-semibold text-[#F4F3EF] truncate leading-tight">
+              {profile?.name || 'Sarah Lin'}
+            </p>
+            <p className="text-[10px] text-[#A7A9B0] truncate leading-tight">
+              {profile?.roleTitle || 'Workspace Admin'}
+            </p>
           </div>
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] flex-shrink-0" title="Online" />
+          <span
+            className="w-2 h-2 rounded-full bg-[#55C89A] shadow-[0_0_6px_#55C89A]"
+            title="Active"
+          />
         </div>
       </div>
     </aside>

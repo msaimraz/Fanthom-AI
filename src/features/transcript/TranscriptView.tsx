@@ -56,25 +56,25 @@ export const TranscriptView: React.FC<TranscriptViewProps> = ({ meeting }) => {
   });
 
   return (
-    <div className="flex flex-col h-full bg-[#111217] border border-[#1d1f28] rounded-xl overflow-hidden relative">
+    <div className="flex flex-col h-full bg-[#17191D] border border-[#23262D] rounded-xl overflow-hidden relative">
       {/* Transcript Header with Search */}
-      <div className="p-3 border-b border-[#181a24] bg-[#0e0f15] flex items-center justify-between gap-3">
+      <div className="p-3.5 border-b border-[#23262D] bg-[#17191D] flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-zinc-200">Transcript</span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161822] text-zinc-400 border border-[#202330]">
+          <span className="text-xs font-semibold text-[#F4F3EF]">Conversation Transcript</span>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#101114] text-[#A7A9B0] border border-[#23262D]">
             {meeting.transcript.length} turns
           </span>
         </div>
 
         {/* In-transcript search */}
-        <div className="relative w-48 sm:w-60">
-          <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
+        <div className="relative w-48 sm:w-64">
+          <Search className="w-3.5 h-3.5 text-[#6F737D] absolute left-2.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search transcript..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-[#07080b] border border-[#1e202d] rounded-lg pl-8 pr-3 py-1.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-cyan-400/60 transition-colors shadow-inner"
+            className="w-full bg-[#101114] border border-[#23262D] rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#F4F3EF] placeholder-[#6F737D] focus:outline-none focus:border-[#8B7CF6] transition-colors"
           />
         </div>
       </div>
@@ -83,7 +83,7 @@ export const TranscriptView: React.FC<TranscriptViewProps> = ({ meeting }) => {
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-4 space-y-2 divide-y divide-[#161822]"
+        className="flex-1 overflow-y-auto p-4 space-y-2.5 divide-y divide-[#23262D]/60"
       >
         {filteredTurns.map((turn) => {
           const isActive = turn.id === activeTurnId;
@@ -93,10 +93,10 @@ export const TranscriptView: React.FC<TranscriptViewProps> = ({ meeting }) => {
             <div
               key={turn.id}
               ref={isActive ? activeElementRef : null}
-              className={`pt-2.5 first:pt-0 rounded-lg p-2.5 transition-all duration-150 group ${
+              className={`pt-2.5 first:pt-0 rounded-lg p-3 transition-all duration-150 group ${
                 isActive
-                  ? 'bg-cyan-950/20 border-l-2 border-cyan-400 pl-3 shadow-inner'
-                  : 'hover:bg-[#13151f] border-l-2 border-transparent pl-3'
+                  ? 'bg-cyan-950/20 border-cyan-400 bg-[#1D2025] border-l-2 border-l-[#8B7CF6] pl-3.5 shadow-sm'
+                  : 'hover:bg-[#1D2025]/60 border-l-2 border-transparent pl-3.5'
               }`}
             >
               {/* Speaker header row */}
@@ -106,22 +106,22 @@ export const TranscriptView: React.FC<TranscriptViewProps> = ({ meeting }) => {
                     <img
                       src={speaker.avatarUrl}
                       alt={speaker.name}
-                      className="w-4.5 h-4.5 rounded-full object-cover border border-[#242738]"
+                      className="w-5 h-5 rounded-full object-cover border border-[#2C3039]"
                     />
                   ) : (
-                    <div className="w-4.5 h-4.5 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400">
-                      <User className="w-2.5 h-2.5" />
+                    <div className="w-5 h-5 rounded-full bg-[#23262D] flex items-center justify-center text-[#A7A9B0]">
+                      <User className="w-3 h-3" />
                     </div>
                   )}
                   <span
                     className={`text-xs font-semibold ${
-                      isActive ? 'text-cyan-300' : 'text-zinc-200'
+                      isActive ? 'text-[#8B7CF6]' : 'text-[#F4F3EF]'
                     }`}
                   >
                     {speaker?.name || turn.speakerId}
                   </span>
                   {speaker?.role && (
-                    <span className="text-[10px] text-zinc-500 hidden sm:inline">
+                    <span className="text-[11px] text-[#6F737D] hidden sm:inline">
                       • {speaker.role}
                     </span>
                   )}
@@ -134,10 +134,10 @@ export const TranscriptView: React.FC<TranscriptViewProps> = ({ meeting }) => {
                     play();
                   }}
                   title={`Jump playback to ${formatTime(turn.startTime)}`}
-                  className={`flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-md transition-all shadow-sm ${
+                  className={`flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-md transition-all ${
                     isActive
-                      ? 'bg-cyan-400 text-black font-semibold'
-                      : 'bg-[#151722] text-zinc-400 hover:text-cyan-300 hover:bg-[#1d2030] border border-[#202332]'
+                      ? 'bg-[#8B7CF6] text-white font-semibold shadow-sm'
+                      : 'bg-[#101114] text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] border border-[#23262D]'
                   }`}
                 >
                   <Play className="w-2.5 h-2.5 fill-current" />
@@ -148,7 +148,7 @@ export const TranscriptView: React.FC<TranscriptViewProps> = ({ meeting }) => {
               {/* Spoken Text */}
               <p
                 className={`text-[13px] leading-relaxed transition-colors cursor-pointer ${
-                  isActive ? 'text-zinc-100 font-medium' : 'text-zinc-300 hover:text-zinc-100'
+                  isActive ? 'text-[#F4F3EF] font-medium' : 'text-[#A7A9B0] hover:text-[#F4F3EF]'
                 }`}
                 onClick={() => {
                   seek(turn.startTime);
@@ -162,7 +162,7 @@ export const TranscriptView: React.FC<TranscriptViewProps> = ({ meeting }) => {
         })}
 
         {filteredTurns.length === 0 && (
-          <div className="py-16 text-center text-xs text-zinc-500">
+          <div className="py-16 text-center text-xs text-[#6F737D]">
             No matching statements found for "{searchTerm}".
           </div>
         )}
@@ -172,7 +172,7 @@ export const TranscriptView: React.FC<TranscriptViewProps> = ({ meeting }) => {
       {autoScrollPaused && isPlaying && (
         <button
           onClick={resumeAutoScroll}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-cyan-400 hover:bg-cyan-300 text-black text-xs font-semibold shadow-xl shadow-cyan-950/50 flex items-center gap-1.5 transition-all active:scale-95 z-10"
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-[#8B7CF6] hover:bg-[#9D91FF] text-white text-xs font-semibold shadow-xl shadow-[#8B7CF6]/30 flex items-center gap-1.5 transition-all active:scale-95 z-10"
         >
           <ArrowDown className="w-3.5 h-3.5 stroke-[2.5]" />
           <span>Resume scroll</span>

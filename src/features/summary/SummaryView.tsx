@@ -50,20 +50,20 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ meeting }) => {
 
   if (!summary) {
     return (
-      <div className="p-8 text-center text-xs text-zinc-500">
+      <div className="p-8 text-center text-xs text-[#6F737D]">
         No summary generated for this meeting.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#111217] border border-[#1d1f28] rounded-xl overflow-hidden">
+    <div className="flex flex-col h-full bg-[#17191D] border border-[#23262D] rounded-xl overflow-hidden">
       {/* Top Header & Template Selector */}
-      <div className="p-3 border-b border-[#181a24] bg-[#0e0f15] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="p-3.5 border-b border-[#23262D] bg-[#17191D] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Template switcher pill group */}
         <div className="flex items-center gap-1.5 overflow-x-auto select-none">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 font-mono mr-1">
-            Template:
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono mr-1">
+            Perspective:
           </span>
           {meeting.availableTemplateIds.map((templateId) => {
             const templateMeta = SUMMARY_TEMPLATES[templateId] || {
@@ -78,8 +78,8 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ meeting }) => {
                 onClick={() => setMeetingTemplate(meeting.id, templateId)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                   isSelected
-                    ? 'bg-cyan-400 text-black font-semibold shadow-sm shadow-cyan-500/20'
-                    : 'bg-[#141620] text-zinc-400 hover:text-zinc-200 hover:bg-[#1a1d2c] border border-[#1f2334]'
+                    ? 'bg-[#8B7CF6] text-white font-semibold shadow-sm shadow-[#8B7CF6]/20'
+                    : 'bg-[#101114] text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] border border-[#23262D]'
                 }`}
               >
                 {getTemplateIcon(templateId)}
@@ -92,17 +92,17 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ meeting }) => {
         {/* Copy button */}
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#141620] hover:bg-[#1c1f2e] text-zinc-300 hover:text-white rounded-lg transition-colors border border-[#222638] ml-auto shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#101114] hover:bg-[#1D2025] text-[#A7A9B0] hover:text-[#F4F3EF] rounded-lg transition-colors border border-[#23262D] ml-auto"
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-cyan-400 stroke-[2.5]" />
-              <span className="text-cyan-300 font-semibold">Copied!</span>
+              <Check className="w-3.5 h-3.5 text-[#55C89A] stroke-[2.5]" />
+              <span className="text-[#55C89A] font-semibold">Copied!</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Copy Summary</span>
+              <Copy className="w-3.5 h-3.5 text-[#6F737D]" />
+              <span>Copy Notes</span>
             </>
           )}
         </button>
@@ -111,33 +111,33 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ meeting }) => {
       {/* Summary Content Body */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* Executive / Meeting Overview */}
-        <div className="p-4 rounded-xl bg-[#14161f] border border-[#202332] shadow-sm">
+        <div className="p-4 rounded-xl bg-[#14161f] bg-[#101114] border border-[#23262D] shadow-sm">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <span className="text-xs font-semibold text-zinc-200 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block" />
+            <span className="text-xs font-semibold text-[#F4F3EF] flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#8B7CF6] inline-block" />
               {summary.templateName}
             </span>
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#101118] text-cyan-300 border border-cyan-500/25 font-semibold">
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#17191D] text-[#8B7CF6] border border-[#8B7CF6]/25 font-medium">
               {summary.sentiment}
             </span>
           </div>
-          <p className="text-[13px] text-zinc-300 leading-relaxed font-normal">{summary.overview}</p>
+          <p className="text-[13px] text-[#A7A9B0] leading-relaxed font-normal">{summary.overview}</p>
         </div>
 
         {/* Metrics Grid (if present) */}
         {summary.metrics && (
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 font-mono mb-2 block">
-              Meeting Metrics & Data
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono mb-2 block">
+              Conversation Metrics
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {Object.entries(summary.metrics).map(([key, val]) => (
                 <div
                   key={key}
-                  className="bg-[#10121a] border border-[#1d202d] rounded-lg p-2.5 text-center shadow-inner"
+                  className="bg-[#101114] border border-[#23262D] rounded-lg p-2.5 text-center"
                 >
-                  <p className="text-[10px] text-zinc-400 truncate uppercase font-mono">{key}</p>
-                  <p className="text-xs font-bold text-zinc-100 mt-1 font-mono">{val}</p>
+                  <p className="text-[10px] text-[#6F737D] truncate uppercase font-mono">{key}</p>
+                  <p className="text-xs font-bold text-[#F4F3EF] mt-1 font-mono">{val}</p>
                 </div>
               ))}
             </div>
@@ -146,17 +146,17 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ meeting }) => {
 
         {/* Discussion Takeaways */}
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 font-mono mb-2 block">
-            Key Discussion Points
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono mb-2 block">
+            Key Decisions & Takeaways
           </span>
           <ul className="space-y-2">
             {summary.keyTakeaways.map((takeaway, idx) => (
               <li
                 key={idx}
-                className="flex items-start gap-3 p-3 rounded-lg bg-[#10121a] border border-[#1b1e2c] text-xs text-zinc-200 leading-relaxed shadow-sm"
+                className="flex items-start gap-3 p-3 rounded-lg bg-[#101114] border border-[#23262D] text-xs text-[#F4F3EF] leading-relaxed"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 flex-shrink-0 shadow-[0_0_6px_#00d2ee]" />
-                <span className="text-[13px] text-zinc-200 leading-relaxed">{takeaway}</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-[#8B7CF6] mt-1.5 flex-shrink-0" />
+                <span className="text-[13px] text-[#F4F3EF] leading-relaxed">{takeaway}</span>
               </li>
             ))}
           </ul>
@@ -165,24 +165,23 @@ export const SummaryView: React.FC<SummaryViewProps> = ({ meeting }) => {
         {/* Next Steps */}
         {summary.nextSteps && summary.nextSteps.length > 0 && (
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 font-mono mb-2 block">
-              Next Steps & Commitments
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono mb-2 block">
+              Agreed Next Steps
             </span>
             <div className="space-y-2">
               {summary.nextSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-2.5 p-3 rounded-lg bg-[#10121a] border border-[#1b1e2c] text-xs text-zinc-300 shadow-sm"
+                  className="flex items-center gap-2.5 p-3 rounded-lg bg-[#101114] border border-[#23262D] text-xs text-[#A7A9B0]"
                 >
-                  <ArrowUpRight className="w-4 h-4 text-cyan-400 flex-shrink-0" />
-                  <span className="text-[13px] text-zinc-200">{step}</span>
+                  <ArrowUpRight className="w-4 h-4 text-[#55C89A] flex-shrink-0" />
+                  <span className="text-[13px] text-[#F4F3EF]">{step}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
       </div>
-
     </div>
   );
 };

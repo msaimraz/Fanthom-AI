@@ -17,7 +17,7 @@ export const oneOnOneMeeting: Meeting = {
       email: 'maya@fanthom.ai',
       avatarUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=128&h=128&fit=crop&crop=face',
       role: 'Engineering Director',
-      company: 'Fathom Labs',
+      company: 'Fanthom Labs',
       isHost: true,
     },
     {
@@ -26,7 +26,7 @@ export const oneOnOneMeeting: Meeting = {
       email: 'chris.evans@fanthom.ai',
       avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&crop=face',
       role: 'Staff ML Engineer',
-      company: 'Fathom Labs',
+      company: 'Fanthom Labs',
     },
   ],
   summaries: {
