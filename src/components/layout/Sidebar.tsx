@@ -1,14 +1,13 @@
-import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  Layers,
-  CheckSquare,
+  Compass,
+  MessagesSquare,
+  Bookmark,
   Search,
   RotateCcw,
-  Zap,
-  FolderOpen,
-  Users,
-  Terminal,
+  PanelLeftOpen,
+  PanelLeftClose,
 } from 'lucide-react';
 import { useMeetingsStore } from '../../store/useMeetingsStore';
 
@@ -18,215 +17,259 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     meetings,
     profile,
     workspace,
+    categoryFilter,
     setCategoryFilter,
   } = useMeetingsStore();
 
-  const pendingActionCount = meetings.reduce(
-    (acc, m) => acc + m.actionItems.filter((a) => !a.completed).length,
+  const [isPinned, setIsPinned] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const isExpanded = isPinned || isHovered;
+
+  const totalHighlights = meetings.reduce(
+    (acc, m) => acc + (m.highlights?.length || 0) + (m.clips?.length || 0),
     0
   );
-  const customerCount = meetings.filter((m) => m.category === 'customer').length;
-  const teamCount = meetings.filter((m) => m.category === 'team').length;
-  const oneOnOneCount = meetings.filter((m) => m.category === 'one_on_one').length;
 
-
-  const handleFilterNavigate = (category: any) => {
-    setCategoryFilter(category);
-    navigate('/meetings');
-  };
+  const isWorkspaceRoute = location.pathname === '/meetings' && categoryFilter === 'all';
+  const isConversationsActive =
+    location.pathname.startsWith('/meetings/') ||
+    (location.pathname === '/meetings' && categoryFilter !== 'all');
+  const isHighlightsActive = location.search.includes('tab=clips');
 
   return (
-    <aside className="w-[232px] flex-shrink-0 bg-[#17191D] border-r border-[#23262D] flex flex-col justify-between h-screen select-none">
-      {/* Brand & Search */}
+    <aside
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      aria-label="Primary Navigation Rail"
+      className={`${
+        isExpanded ? 'w-56' : 'w-14'
+      } flex-shrink-0 bg-[#121417] border-r border-[#1E2127] flex flex-col justify-between h-screen select-none transition-[width] duration-150 ease-out z-30 overflow-hidden`}
+    >
+      {/* Top Section: Brand + Primary Navigation */}
       <div className="flex flex-col">
-        {/* Fanthom Brand Header */}
-        <div className="h-14 flex items-center justify-between px-4 border-b border-[#23262D]">
-          <div
-            className="flex items-center gap-2.5 cursor-pointer group"
+        {/* Brand Masthead */}
+        <div className="h-12 flex items-center justify-between px-3.5 border-b border-[#1E2127]">
+          <button
             onClick={() => {
               setCategoryFilter('all');
               navigate('/meetings');
             }}
+            className="flex items-center gap-3 min-w-0 text-left group"
+            title="Fanthom — Conversation OS"
           >
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#8B7CF6] to-[#6355D8] flex items-center justify-center shadow-sm shadow-[#8B7CF6]/20 transition-transform group-hover:scale-105">
-              <span className="font-bold text-xs text-white font-mono">F</span>
+            <div className="w-7 h-7 bg-[#C7F36B] text-[#0B0C0E] flex items-center justify-center flex-shrink-0 font-mono font-bold text-xs tracking-tighter">
+              F
             </div>
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm tracking-tight text-[#F4F3EF] leading-tight">
-                Fanthom
-              </span>
-              <span className="text-[10px] text-[#A7A9B0] tracking-wide leading-none">
-                Intelligence
-              </span>
-            </div>
-          </div>
-
-          <span className="text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-[#1D2025] text-[#8B7CF6] border border-[#8B7CF6]/25 font-medium">
-            {workspace?.plan || 'Pro'}
-          </span>
-        </div>
-
-        {/* Quick Search Trigger */}
-        <div className="px-3 pt-3.5 pb-1">
-          <button
-            onClick={onOpenSearch}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs text-[#A7A9B0] bg-[#101114] hover:bg-[#1D2025] hover:text-[#F4F3EF] border border-[#23262D] hover:border-[#2C3039] rounded-lg transition-all group"
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              <Search className="w-3.5 h-3.5 text-[#6F737D] group-hover:text-[#8B7CF6] transition-colors flex-shrink-0" />
-              <span className="text-[11px] truncate">Search workspace...</span>
-            </div>
-            <kbd className="text-[10px] bg-[#1D2025] text-[#A7A9B0] px-1.5 py-0.5 rounded font-mono border border-[#282B33] flex-shrink-0">
-              ⌘K
-            </kbd>
-          </button>
-        </div>
-
-        {/* Main Nav Links */}
-        <nav className="p-3 space-y-1">
-          <div className="px-1.5 pb-1 pt-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono">
-              Workspace
-            </span>
-          </div>
-
-          <NavLink
-            to="/meetings"
-            end
-            onClick={() => setCategoryFilter('all')}
-            className={({ isActive }) =>
-              `flex items-center justify-between px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                isActive
-                  ? 'bg-[#8B7CF6]/15 text-[#F4F3EF] font-semibold border border-[#8B7CF6]/30'
-                  : 'text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025]'
-              }`
-            }
-          >
-            <div className="flex items-center gap-2">
-              <Layers className="w-3.5 h-3.5 text-[#A7A9B0]" />
-              <span>All Meetings</span>
-            </div>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#101114] text-[#A7A9B0] font-mono border border-[#23262D]">
-              {meetings.length}
-            </span>
-          </NavLink>
-
-          <button
-            onClick={() => {
-              navigate('/meetings');
-            }}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors text-left"
-          >
-            <div className="flex items-center gap-2">
-              <CheckSquare className="w-3.5 h-3.5 text-[#A7A9B0]" />
-              <span>Follow-ups</span>
-            </div>
-            {pendingActionCount > 0 && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#8B7CF6]/15 text-[#8B7CF6] font-semibold border border-[#8B7CF6]/30 font-mono">
-                {pendingActionCount}
-              </span>
+            {isExpanded && (
+              <div className="flex flex-col min-w-0">
+                <span className="font-mono font-semibold text-xs tracking-[0.14em] uppercase text-[#F2EFE8] leading-none">
+                  FANTHOM
+                </span>
+                <span className="text-[10px] font-mono text-[#969AA3] tracking-tight mt-0.5 truncate">
+                  Conversation OS
+                </span>
+              </div>
             )}
           </button>
 
-          {/* Smart Views / Categories */}
-          <div className="pt-3 px-1.5 pb-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono">
-              Conversations
-            </span>
-          </div>
+          {isExpanded && (
+            <button
+              onClick={() => setIsPinned((prev) => !prev)}
+              title={isPinned ? 'Collapse navigation rail' : 'Pin navigation rail'}
+              className="p-1 text-[#969AA3] hover:text-[#F2EFE8] transition-colors flex-shrink-0"
+            >
+              {isPinned ? (
+                <PanelLeftClose className="w-3.5 h-3.5 text-[#C7F36B]" />
+              ) : (
+                <PanelLeftOpen className="w-3.5 h-3.5" />
+              )}
+            </button>
+          )}
+        </div>
 
+        {/* Primary Rail Items: Workspace, Conversations, Highlights, Search */}
+        <nav className="py-3 px-2 space-y-1">
+          {/* 1. Workspace */}
           <button
-            onClick={() => handleFilterNavigate('customer')}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors text-left"
+            onClick={() => {
+              setCategoryFilter('all');
+              navigate('/meetings');
+            }}
+            title="Workspace Timeline"
+            className={`w-full flex items-center gap-3 px-2.5 py-2 text-xs font-medium transition-colors relative ${
+              isWorkspaceRoute
+                ? 'bg-[#191C20] text-[#F2EFE8] border-l-2 border-[#C7F36B]'
+                : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]/60 border-l-2 border-transparent'
+            }`}
           >
-            <div className="flex items-center gap-2">
-              <FolderOpen className="w-3.5 h-3.5 text-[#8B7CF6]/80" />
-              <span className="truncate">Customer Deals</span>
-            </div>
-            <span className="text-[10px] text-[#6F737D] font-mono">{customerCount}</span>
+            <Compass
+              className={`w-4 h-4 flex-shrink-0 ${
+                isWorkspaceRoute ? 'text-[#C7F36B]' : 'text-[#969AA3]'
+              }`}
+            />
+            {isExpanded && (
+              <>
+                <span className="truncate">Workspace</span>
+                <span className="ml-auto text-[10px] font-mono text-[#969AA3]">
+                  {meetings.length}
+                </span>
+              </>
+            )}
           </button>
 
+          {/* 2. Conversations */}
           <button
-            onClick={() => handleFilterNavigate('team')}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors text-left"
+            onClick={() => {
+              navigate('/meetings/enterprise-sales-discovery-acme');
+            }}
+            title="Conversations"
+            className={`w-full flex items-center gap-3 px-2.5 py-2 text-xs font-medium transition-colors relative ${
+              isConversationsActive && !isHighlightsActive
+                ? 'bg-[#191C20] text-[#F2EFE8] border-l-2 border-[#C7F36B]'
+                : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]/60 border-l-2 border-transparent'
+            }`}
           >
-            <div className="flex items-center gap-2">
-              <Terminal className="w-3.5 h-3.5 text-[#E7B45C]/80" />
-              <span className="truncate">Engineering & Ops</span>
-            </div>
-            <span className="text-[10px] text-[#6F737D] font-mono">{teamCount}</span>
+            <MessagesSquare
+              className={`w-4 h-4 flex-shrink-0 ${
+                isConversationsActive && !isHighlightsActive
+                  ? 'text-[#C7F36B]'
+                  : 'text-[#969AA3]'
+              }`}
+            />
+            {isExpanded && (
+              <>
+                <span className="truncate">Conversations</span>
+                <span className="ml-auto text-[10px] font-mono text-[#C7F36B]">
+                  LIVE
+                </span>
+              </>
+            )}
           </button>
 
+          {/* 3. Highlights */}
           <button
-            onClick={() => handleFilterNavigate('one_on_one')}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors text-left"
+            onClick={() => {
+              navigate('/meetings/enterprise-sales-discovery-acme?tab=clips');
+            }}
+            title="Highlights & Clips"
+            className={`w-full flex items-center gap-3 px-2.5 py-2 text-xs font-medium transition-colors relative ${
+              isHighlightsActive
+                ? 'bg-[#191C20] text-[#F2EFE8] border-l-2 border-[#C7F36B]'
+                : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]/60 border-l-2 border-transparent'
+            }`}
           >
-            <div className="flex items-center gap-2">
-              <Users className="w-3.5 h-3.5 text-[#55C89A]/80" />
-              <span className="truncate">1-on-1 Reviews</span>
-            </div>
-            <span className="text-[10px] text-[#6F737D] font-mono">{oneOnOneCount}</span>
+            <Bookmark
+              className={`w-4 h-4 flex-shrink-0 ${
+                isHighlightsActive ? 'text-[#C7F36B]' : 'text-[#969AA3]'
+              }`}
+            />
+            {isExpanded && (
+              <>
+                <span className="truncate">Highlights</span>
+                <span className="ml-auto text-[10px] font-mono text-[#969AA3]">
+                  {totalHighlights}
+                </span>
+              </>
+            )}
           </button>
 
-          {/* Hero Recording Pin */}
-          <div className="pt-3 px-1.5 pb-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono">
-              Highlighted Call
-            </span>
-          </div>
-
+          {/* 4. Search (Fanthom Command) */}
           <button
-            onClick={() => navigate('/meetings/enterprise-sales-discovery-acme')}
-            className="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium text-[#F4F3EF] bg-[#101114] hover:bg-[#1D2025] border border-[#23262D] hover:border-[#8B7CF6]/40 rounded-lg transition-all group text-left shadow-sm"
+            onClick={onOpenSearch}
+            title="Fanthom Command (Ctrl/Cmd+K)"
+            className="w-full flex items-center gap-3 px-2.5 py-2 text-xs font-medium text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]/60 border-l-2 border-transparent transition-colors"
           >
-            <Zap className="w-3.5 h-3.5 text-[#8B7CF6] flex-shrink-0" />
-            <span className="truncate text-[11px] font-medium text-[#F4F3EF] group-hover:text-[#8B7CF6]">
-              Acme Discovery
-            </span>
-            <span className="ml-auto text-[8px] px-1.5 py-0.5 rounded bg-[#8B7CF6]/15 text-[#8B7CF6] font-mono border border-[#8B7CF6]/25 flex-shrink-0">
-              AUDIO
-            </span>
+            <Search className="w-4 h-4 flex-shrink-0 text-[#969AA3]" />
+            {isExpanded && (
+              <>
+                <span className="truncate">Search</span>
+                <kbd className="ml-auto text-[10px] font-mono text-[#969AA3] bg-[#0B0C0E] px-1.5 py-0.5 border border-[#1E2127]">
+                  ⌘K
+                </kbd>
+              </>
+            )}
           </button>
         </nav>
+
+        {/* Expanded Section: Streams / Direct Jump */}
+        {isExpanded && (
+          <div className="px-3 pt-4 border-t border-[#1E2127] space-y-1">
+            <div className="px-1.5 pb-1 flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-[#5E626B]">
+                Streams
+              </span>
+              <span className="text-[9px] font-mono text-[#5E626B]">
+                {workspace?.plan || 'PRO'}
+              </span>
+            </div>
+
+            {[
+              { id: 'all', label: 'All Streams', dot: 'bg-[#C7F36B]' },
+              { id: 'customer', label: 'Customer Deals', dot: 'bg-[#F0B449]' },
+              { id: 'team', label: 'Engineering & Ops', dot: 'bg-[#5BA3F5]' },
+              { id: 'one_on_one', label: '1-on-1 Reviews', dot: 'bg-[#47D18C]' },
+            ].map((stream) => {
+              const active =
+                location.pathname === '/meetings' && categoryFilter === stream.id;
+              return (
+                <button
+                  key={stream.id}
+                  onClick={() => {
+                    setCategoryFilter(stream.id as any);
+                    navigate('/meetings');
+                  }}
+                  className={`w-full flex items-center gap-2.5 px-2 py-1.5 text-xs transition-colors text-left ${
+                    active
+                      ? 'text-[#F2EFE8] bg-[#191C20] font-medium'
+                      : 'text-[#969AA3] hover:text-[#F2EFE8]'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${stream.dot}`} />
+                  <span className="truncate">{stream.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Footer Profile & Reset */}
-      <div className="p-3 border-t border-[#23262D] space-y-2 bg-[#17191D]">
-        <button
-          disabled
-          title="Database reset is disabled in the public shared demo workspace"
-          className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[11px] font-medium text-[#6F737D] bg-[#101114]/50 rounded-md border border-[#23262D]/60 cursor-not-allowed opacity-70"
-        >
-          <RotateCcw className="w-3 h-3" />
-          <span>Reset Demo Data (Protected)</span>
-        </button>
+      {/* Bottom Operator Footer */}
+      <div className="p-2.5 border-t border-[#1E2127] bg-[#121417] space-y-2">
+        {isExpanded && (
+          <button
+            disabled
+            title="Database reset is disabled in the public shared demo workspace"
+            className="w-full flex items-center justify-center gap-1.5 py-1 text-[10px] font-mono text-[#5E626B] bg-[#0B0C0E] border border-[#1E2127] cursor-not-allowed"
+          >
+            <RotateCcw className="w-3 h-3" />
+            <span>Reset Demo Data (Protected)</span>
+          </button>
+        )}
 
-        {/* User Profile Tile */}
-        <div className="flex items-center gap-2.5 pt-1.5 px-1 border-t border-[#23262D]/60">
+        <div className="flex items-center gap-2.5 px-1">
           <img
             src={
               profile?.avatarUrl ||
               'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=64&h=64&fit=crop&crop=face'
             }
             alt={profile?.name || 'Sarah Lin'}
-            className="w-7 h-7 rounded-full border border-[#8B7CF6]/40 object-cover shadow-sm"
+            className="w-7 h-7 rounded-sm border border-[#272B33] object-cover flex-shrink-0"
           />
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-[#F4F3EF] truncate leading-tight">
-              {profile?.name || 'Sarah Lin'}
-            </p>
-            <p className="text-[10px] text-[#A7A9B0] truncate leading-tight">
-              {profile?.roleTitle || 'Workspace Admin'}
-            </p>
-          </div>
-          <span
-            className="w-2 h-2 rounded-full bg-[#55C89A] shadow-[0_0_6px_#55C89A]"
-            title="Active"
-          />
+          {isExpanded && (
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-[#F2EFE8] truncate leading-tight">
+                {profile?.name || 'Sarah Lin'}
+              </p>
+              <p className="text-[10px] font-mono text-[#969AA3] truncate leading-tight">
+                {profile?.roleTitle || 'Workspace Admin'}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </aside>

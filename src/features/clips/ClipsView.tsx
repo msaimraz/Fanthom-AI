@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import {
-  Scissors,
   Play,
   Share2,
   Trash2,
-  Clock,
-  Quote,
   Plus,
   Bookmark,
   Check,
@@ -52,7 +49,7 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
   const handleOpenAddHighlight = () => {
     setHlTitle('Key Customer Commitment');
     setHlCategory('Key Decision');
-    setHlStartTime(Math.floor(currentTime || 15));
+    setHlStartTime(Math.max(25, Math.floor(currentTime || 35)));
     setIsAddingHighlight(true);
   };
 
@@ -83,13 +80,15 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#17191D] border border-[#23262D] rounded-xl overflow-hidden">
+    <div className="flex flex-col h-full bg-[#121417] border border-[#1E2127] overflow-hidden">
       {/* Header */}
-      <div className="p-3.5 border-b border-[#23262D] bg-[#17191D] flex items-center justify-between gap-3">
+      <div className="px-4 py-2.5 border-b border-[#1E2127] bg-[#121417] flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Scissors className="w-4 h-4 text-[#8B7CF6]" />
-          <span className="text-xs font-semibold text-[#F4F3EF]">Highlights & Saved Clips</span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#101114] text-[#A7A9B0] border border-[#23262D]">
+          <span className="w-1.5 h-1.5 bg-[#C7F36B]" />
+          <span className="text-xs font-mono uppercase tracking-[0.12em] font-semibold text-[#F2EFE8]">
+            Highlights & Clips
+          </span>
+          <span className="text-[10px] font-mono px-1.5 py-0.5 bg-[#0B0C0E] text-[#969AA3] border border-[#1E2127]">
             {meeting.clips.length} clips
           </span>
         </div>
@@ -97,15 +96,15 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={handleOpenAddHighlight}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium bg-[#101114] hover:bg-[#1D2025] text-[#E7B45C] border border-[#E7B45C]/30 rounded-lg transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono bg-[#0B0C0E] hover:bg-[#191C20] text-[#F0B449] border border-[#F0B449]/40 transition-colors"
           >
-            <Bookmark className="w-3.5 h-3.5" />
+            <Bookmark className="w-3 h-3" />
             <span>Add Highlight</span>
           </button>
 
           <button
             onClick={onOpenCreateClip}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#8B7CF6] hover:bg-[#9D91FF] text-white rounded-lg transition-all shadow-sm shadow-[#8B7CF6]/20 active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-semibold bg-[#C7F36B] hover:bg-[#d4f788] text-[#0B0C0E] transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>New Clip</span>
@@ -114,22 +113,21 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-5">
         {/* Inline Add Highlight Form */}
         {isAddingHighlight && (
           <form
             onSubmit={handleSaveHighlight}
-            className="p-3.5 rounded-xl bg-[#101114] border border-[#E7B45C]/40 space-y-3"
+            className="p-3.5 bg-[#0B0C0E] border border-[#F0B449]/50 space-y-3"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#F4F3EF] flex items-center gap-1.5">
-                <Bookmark className="w-3.5 h-3.5 text-[#E7B45C]" />
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold text-[#F0B449]">
                 Create Moment Highlight
               </span>
               <button
                 type="button"
                 onClick={() => setIsAddingHighlight(false)}
-                className="text-[#6F737D] hover:text-[#F4F3EF]"
+                className="text-[#969AA3] hover:text-[#F2EFE8]"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -141,12 +139,12 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
                 value={hlTitle}
                 onChange={(e) => setHlTitle(e.target.value)}
                 placeholder="Highlight title..."
-                className="sm:col-span-2 bg-[#17191D] border border-[#23262D] rounded-lg px-3 py-1.5 text-xs text-[#F4F3EF] placeholder-[#6F737D] focus:outline-none focus:border-[#8B7CF6]"
+                className="sm:col-span-2 bg-[#121417] border border-[#1E2127] px-3 py-1.5 text-xs text-[#F2EFE8] placeholder-[#5E626B] focus:outline-none focus:border-[#C7F36B]"
               />
               <select
                 value={hlCategory}
                 onChange={(e) => setHlCategory(e.target.value as Highlight['category'])}
-                className="bg-[#17191D] border border-[#23262D] rounded-lg px-2.5 py-1.5 text-xs text-[#F4F3EF] focus:outline-none focus:border-[#8B7CF6]"
+                className="bg-[#121417] border border-[#1E2127] px-2.5 py-1.5 text-xs text-[#F2EFE8] focus:outline-none focus:border-[#C7F36B]"
               >
                 <option value="Key Decision">Key Decision</option>
                 <option value="Product Request">Product Request</option>
@@ -157,7 +155,7 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
             </div>
 
             <div className="flex items-center justify-between gap-2 pt-1">
-              <div className="flex items-center gap-2 text-[11px] text-[#A7A9B0] font-mono">
+              <div className="flex items-center gap-2 text-[11px] text-[#969AA3] font-mono">
                 <span>Timestamp (s):</span>
                 <input
                   type="number"
@@ -166,23 +164,23 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
                   step="1"
                   value={hlStartTime}
                   onChange={(e) => setHlStartTime(Number(e.target.value) || 0)}
-                  className="w-16 bg-[#17191D] border border-[#23262D] rounded px-2 py-0.5 text-xs text-[#F4F3EF]"
+                  className="w-16 bg-[#121417] border border-[#1E2127] px-2 py-0.5 text-xs text-[#F2EFE8]"
                 />
-                <span className="text-[#E7B45C]">({formatTime(hlStartTime)})</span>
+                <span className="text-[#F0B449]">({formatTime(hlStartTime)})</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setIsAddingHighlight(false)}
-                  className="px-2.5 py-1 text-xs text-[#A7A9B0] hover:text-[#F4F3EF]"
+                  className="px-2.5 py-1 text-xs font-mono text-[#969AA3] hover:text-[#F2EFE8]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSavingHighlight}
-                  className="flex items-center gap-1 px-3 py-1 rounded-lg bg-[#8B7CF6] hover:bg-[#9D91FF] text-white text-xs font-semibold transition-all disabled:opacity-50"
+                  className="flex items-center gap-1 px-3 py-1 bg-[#C7F36B] hover:bg-[#d4f788] text-[#0B0C0E] text-xs font-mono font-semibold transition-colors disabled:opacity-50"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span>{isSavingHighlight ? 'Saving...' : 'Save Highlight'}</span>
@@ -192,75 +190,90 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
           </form>
         )}
 
-        {/* Pinned Highlights Section */}
+        {/* Highlights Section */}
         <div>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono mb-2 flex items-center gap-1.5">
-            <Bookmark className="w-3.5 h-3.5 text-[#E7B45C]" />
-            Key Moments & Markers ({meeting.highlights?.length || 0})
+          <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-[#969AA3] mb-2 block">
+            Highlights ({meeting.highlights?.length || 0})
           </span>
           {meeting.highlights && meeting.highlights.length > 0 ? (
-            <div className="space-y-1.5">
-              {meeting.highlights.map((hl) => (
-                <div
-                  key={hl.id}
-                  onClick={() => {
-                    seek(hl.startTime);
-                    play();
-                  }}
-                  className="p-2 rounded-lg bg-[#13141b] bg-[#101114] hover:bg-[#1D2025] border border-[#23262D] hover:border-[#8B7CF6]/35 cursor-pointer flex items-center justify-between group transition-all"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="w-2 h-2 rounded-full bg-[#E7B45C] flex-shrink-0" />
-                    <span className="text-xs font-semibold text-[#F4F3EF] group-hover:text-[#8B7CF6] truncate">
-                      {hl.title}
-                    </span>
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#17191D] text-[#A7A9B0] font-mono border border-[#23262D]">
-                      {hl.category}
+            <div className="divide-y divide-[#1E2127] border border-[#1E2127]">
+              {[...meeting.highlights]
+                .sort((a, b) => {
+                  const aSeed = a.id.startsWith('hl-hero') ? 0 : 1;
+                  const bSeed = b.id.startsWith('hl-hero') ? 0 : 1;
+                  if (aSeed !== bSeed) return aSeed - bSeed;
+                  return a.startTime - b.startTime;
+                })
+                .map((hl) => {
+                const dotColor =
+                  hl.category === 'Objection'
+                    ? 'bg-[#F26464]'
+                    : hl.category === 'Action'
+                    ? 'bg-[#47D18C]'
+                    : hl.category === 'Product Request'
+                    ? 'bg-[#5BA3F5]'
+                    : 'bg-[#F0B449]';
+
+                return (
+                  <div
+                    key={hl.id}
+                    onClick={() => {
+                      seek(hl.startTime);
+                      play();
+                    }}
+                    className="p-2 rounded-lg bg-[#13141b] bg-[#0B0C0E] hover:bg-[#191C20] cursor-pointer flex items-center justify-between group transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className={`w-1.5 h-1.5 flex-shrink-0 ${dotColor}`} />
+                      <span className="text-xs font-medium text-[#F2EFE8] group-hover:text-[#C7F36B] truncate">
+                        {hl.title}
+                      </span>
+                      <span className="text-[9px] px-1.5 py-0.5 bg-[#121417] text-[#969AA3] font-mono border border-[#1E2127] uppercase">
+                        {hl.category}
+                      </span>
+                    </div>
+
+                    <span className="flex items-center gap-1 text-[10px] font-mono text-[#969AA3] group-hover:text-[#C7F36B]">
+                      <Play className="w-2.5 h-2.5 fill-current" />
+                      {formatTime(hl.startTime)}
                     </span>
                   </div>
-
-                  <span className="flex items-center gap-1 text-[10px] font-mono text-[#A7A9B0] group-hover:text-[#8B7CF6]">
-                    <Play className="w-2.5 h-2.5 fill-current" />
-                    {formatTime(hl.startTime)}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
-            <div className="py-6 text-center text-xs text-[#6F737D] bg-[#101114] border border-[#23262D] rounded-lg">
-              No highlights recorded yet. Click "Add Highlight" to mark a key moment.
+            <div className="py-6 text-center text-xs font-mono text-[#969AA3] bg-[#0B0C0E] border border-[#1E2127]">
+              No highlights recorded yet. Click "Add Highlight" to mark a moment.
             </div>
           )}
         </div>
 
         {/* Saved Clips Section */}
         <div>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono mb-2.5 flex items-center gap-1.5">
-            <Scissors className="w-3.5 h-3.5 text-[#8B7CF6]" />
+          <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-[#969AA3] mb-2 block">
             Saved Clips ({meeting.clips.length})
           </span>
 
-          <div className="space-y-3">
+          <div className="divide-y divide-[#1E2127] border border-[#1E2127]">
             {meeting.clips.map((clip) => {
               const durationSecs = Math.round(clip.endTime - clip.startTime);
 
               return (
                 <div
                   key={clip.id}
-                  className="p-3.5 rounded-xl bg-[#101114] border border-[#23262D] hover:border-[#2C3039] flex flex-col gap-2.5 transition-all"
+                  className="p-3.5 bg-[#0B0C0E] hover:bg-[#191C20]/50 flex flex-col gap-2.5 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h4 className="text-xs font-semibold text-[#F4F3EF] line-clamp-1">
+                      <h4 className="text-xs font-semibold text-[#F2EFE8] line-clamp-1">
                         {clip.title}
                       </h4>
-                      <div className="flex items-center gap-2 text-[10px] text-[#A7A9B0] font-mono mt-1">
-                        <span className="flex items-center gap-1 text-[#8B7CF6] bg-[#17191D] px-1.5 py-0.5 rounded border border-[#8B7CF6]/25">
-                          <Clock className="w-3 h-3 text-[#8B7CF6]" />
+                      <div className="flex items-center gap-2 text-[10px] text-[#969AA3] font-mono mt-1">
+                        <span className="text-[#C7F36B] bg-[#121417] px-1.5 py-0.5 border border-[#1E2127]">
                           {formatTime(clip.startTime)} – {formatTime(clip.endTime)}
                         </span>
-                        <span>•</span>
-                        <span className="text-[#6F737D]">{durationSecs}s duration</span>
+                        <span className="text-[#5E626B]">·</span>
+                        <span>{durationSecs}s</span>
                       </div>
                     </div>
 
@@ -272,7 +285,7 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
                           play();
                         }}
                         title="Play clip"
-                        className="p-1.5 rounded-lg bg-[#17191D] hover:bg-[#8B7CF6] hover:text-white text-[#A7A9B0] transition-colors border border-[#23262D]"
+                        className="p-1.5 bg-[#121417] hover:bg-[#C7F36B] text-[#969AA3] hover:text-[#0B0C0E] transition-colors border border-[#1E2127]"
                       >
                         <Play className="w-3.5 h-3.5 fill-current" />
                       </button>
@@ -280,7 +293,7 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
                       <button
                         onClick={() => onOpenShareClip(clip)}
                         title="Share clip"
-                        className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-[#8B7CF6] hover:bg-[#9D91FF] text-white rounded-lg transition-all shadow-sm shadow-[#8B7CF6]/20"
+                        className="flex items-center gap-1 px-2.5 py-1 text-xs font-mono font-semibold bg-[#C7F36B] hover:bg-[#d4f788] text-[#0B0C0E] transition-colors"
                       >
                         <Share2 className="w-3 h-3" />
                         <span>Share</span>
@@ -290,7 +303,7 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
                         <button
                           onClick={() => deleteClip(meeting.id, clip.id)}
                           title="Delete clip"
-                          className="p-1.5 text-[#6F737D] hover:text-rose-400 hover:bg-[#17191D] rounded-lg transition-colors ml-0.5"
+                          className="p-1.5 text-[#969AA3] hover:text-[#F26464] hover:bg-[#121417] border border-transparent hover:border-[#1E2127] transition-colors ml-0.5"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -298,26 +311,21 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
                     </div>
                   </div>
 
-                  {/* Quote preview */}
                   {clip.quote && (
-                    <div className="p-2.5 rounded-lg bg-[#17191D] border border-[#23262D] text-xs text-[#A7A9B0] italic flex items-start gap-2">
-                      <Quote className="w-3 h-3 text-[#6F737D] flex-shrink-0 mt-0.5" />
-                      <span className="line-clamp-2 leading-relaxed">"{clip.quote}"</span>
+                    <div className="pl-2.5 border-l border-[#272B33] text-xs text-[#969AA3] leading-relaxed">
+                      <span className="line-clamp-2">"{clip.quote}"</span>
                     </div>
                   )}
 
-                  {/* Speaker chips */}
-                  <div className="flex items-center gap-2 pt-1.5 border-t border-[#23262D]/60">
-                    <span className="text-[10px] text-[#6F737D] font-mono uppercase tracking-wider">
-                      Speakers:
-                    </span>
+                  <div className="flex items-center gap-2 pt-1 font-mono text-[10px]">
+                    <span className="text-[#5E626B] uppercase">Speakers:</span>
                     <div className="flex items-center gap-1.5 flex-wrap">
                       {clip.speakerIds.map((sid) => {
                         const speaker = speakerMap[sid];
                         return (
                           <span
                             key={sid}
-                            className="text-[10px] px-2 py-0.5 rounded-full bg-[#17191D] text-[#A7A9B0] border border-[#23262D] font-medium"
+                            className="px-1.5 py-0.5 bg-[#121417] text-[#F2EFE8] border border-[#1E2127]"
                           >
                             {speaker?.name || sid}
                           </span>
@@ -330,8 +338,8 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
             })}
 
             {meeting.clips.length === 0 && (
-              <div className="py-16 text-center text-xs text-[#6F737D]">
-                No clips created yet. Click "New Clip" to create a highlight moment.
+              <div className="py-16 text-center text-xs font-mono text-[#969AA3]">
+                No clips saved yet. Click "New Clip" to extract a segment.
               </div>
             )}
           </div>
@@ -340,4 +348,3 @@ export const ClipsView: React.FC<ClipsViewProps> = ({
     </div>
   );
 };
-

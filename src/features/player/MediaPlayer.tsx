@@ -6,8 +6,6 @@ import {
   RotateCw,
   Volume2,
   VolumeX,
-  Gauge,
-  Bookmark,
 } from 'lucide-react';
 import { usePlaybackStore } from '../../store/usePlaybackStore';
 import { Meeting, Chapter } from '../../types';
@@ -155,40 +153,40 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = ({ meeting }) => {
         onEnded={() => pause()}
       />
 
-      {/* Speaker Stage */}
+      {/* Speaker Stage Monitor */}
       <SpeakerStage
         participants={meeting.participants}
         activeTurn={activeTurn}
         isPlaying={isPlaying}
       />
 
-      {/* Media Player Control Bar */}
-      <div className="bg-[#17191D] border border-[#23262D] rounded-xl p-3.5 shadow-md flex flex-col gap-3">
-        {/* Scrubber Bar Container */}
+      {/* Professional Audio Transport Deck */}
+      <div className="bg-[#121417] border border-[#1E2127] p-3.5 flex flex-col gap-3">
+        {/* Precision Scrubber Bar */}
         <div
           ref={progressBarRef}
           onClick={handleScrub}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setHoverTime(null)}
-          className="relative h-4 group cursor-pointer flex items-center select-none"
+          className="relative h-5 group cursor-pointer flex items-center select-none"
         >
           {/* Base track */}
-          <div className="w-full h-1.5 bg-[#101114] group-hover:h-2 rounded-full overflow-hidden transition-all relative">
-            {/* Iris progress fill */}
+          <div className="w-full h-1.5 bg-[#0B0C0E] border border-[#1E2127] overflow-hidden relative">
+            {/* Lime progress fill */}
             <div
-              className="h-full bg-gradient-to-r from-[#8B7CF6] to-[#A79AF8] transition-[width] duration-75 relative shadow-[0_0_8px_#8B7CF6]"
+              className="h-full bg-[#C7F36B] transition-[width] duration-75 relative"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
 
-          {/* Chapter Markers along track */}
+          {/* Chapter Tick Markers along track */}
           {meeting.chapters?.map((chap: Chapter) => {
             const leftPercent = duration > 0 ? (chap.startTime / duration) * 100 : 0;
             return (
               <div
                 key={chap.id}
                 title={`${chap.title} (${formatTime(chap.startTime)})`}
-                className="absolute top-1/2 -translate-y-1/2 w-1 h-3 bg-[#6F737D] group-hover:bg-[#8B7CF6] rounded-sm pointer-events-none transition-colors"
+                className="absolute top-1/2 -translate-y-1/2 w-[2px] h-3 bg-[#969AA3] group-hover:bg-[#C7F36B] pointer-events-none transition-colors"
                 style={{ left: `${leftPercent}%` }}
               />
             );
@@ -197,28 +195,28 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = ({ meeting }) => {
           {/* Hover time tooltip */}
           {hoverTime !== null && (
             <div
-              className="absolute -top-7 -translate-x-1/2 px-2 py-0.5 rounded bg-[#101114] text-[10px] font-mono text-[#8B7CF6] shadow-xl border border-[#23262D] pointer-events-none"
+              className="absolute -top-6 -translate-x-1/2 px-1.5 py-0.5 bg-[#0B0C0E] text-[10px] font-mono text-[#C7F36B] border border-[#272B33] pointer-events-none"
               style={{ left: `${hoverPos}px` }}
             >
               {formatTime(hoverTime)}
             </div>
           )}
 
-          {/* Scrubber thumb */}
+          {/* Playhead cursor */}
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-lg border-2 border-[#8B7CF6] scale-0 group-hover:scale-100 transition-transform pointer-events-none"
-            style={{ left: `calc(${progressPercent}% - 7px)` }}
+            className="absolute top-1/2 -translate-y-1/2 w-2.5 h-3.5 bg-[#C7F36B] border border-[#0B0C0E] pointer-events-none"
+            style={{ left: `calc(${progressPercent}% - 5px)` }}
           />
         </div>
 
-        {/* Buttons & Time row */}
-        <div className="flex items-center justify-between">
-          {/* Left: Playback controls */}
+        {/* Transport Controls & Timecode Readout */}
+        <div className="flex items-center justify-between gap-2">
+          {/* Left: Transport */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => skip(-5)}
               title="Skip back 5 seconds (Left Arrow)"
-              className="p-1.5 text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors"
+              className="p-1.5 text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20] border border-[#1E2127] transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
@@ -226,40 +224,42 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = ({ meeting }) => {
             <button
               onClick={togglePlay}
               title="Play/Pause (Space)"
-              className="w-9 h-9 rounded-full bg-[#8B7CF6] hover:bg-[#9D91FF] text-white flex items-center justify-center shadow-md shadow-[#8B7CF6]/25 transition-all active:scale-95 flex-shrink-0"
+              className="w-8 h-8 bg-[#C7F36B] hover:bg-[#d4f788] text-[#0B0C0E] flex items-center justify-center transition-colors flex-shrink-0"
             >
-              {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 ml-0.5 fill-white" />}
+              {isPlaying ? (
+                <Pause className="w-3.5 h-3.5 fill-current" />
+              ) : (
+                <Play className="w-3.5 h-3.5 ml-0.5 fill-current" />
+              )}
             </button>
 
             <button
               onClick={() => skip(5)}
               title="Skip forward 5 seconds (Right Arrow)"
-              className="p-1.5 text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors"
+              className="p-1.5 text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20] border border-[#1E2127] transition-colors"
             >
               <RotateCw className="w-3.5 h-3.5" />
             </button>
 
-            {/* Time readout */}
-            <div className="ml-2 text-xs font-mono text-[#A7A9B0] select-none">
-              <span className="text-[#F4F3EF] font-semibold">{formatTime(currentTime)}</span>
-              <span className="mx-1 text-[#6F737D]">/</span>
+            {/* Tabular Timecode */}
+            <div className="ml-1.5 text-xs font-mono text-[#969AA3] select-none bg-[#0B0C0E] px-2 py-1 border border-[#1E2127]">
+              <span className="text-[#C7F36B] font-semibold">{formatTime(currentTime)}</span>
+              <span className="mx-1 text-[#5E626B]">/</span>
               <span>{formatTime(duration || meeting.durationSeconds)}</span>
             </div>
           </div>
 
-          {/* Right: Speed & Volume */}
-          <div className="flex items-center gap-3">
-            {/* Speed selector */}
-            <div className="flex items-center gap-0.5 bg-[#101114] px-2 py-1 rounded-lg border border-[#23262D]">
-              <Gauge className="w-3 h-3 text-[#6F737D] mr-1" />
+          {/* Right: Speed & Gain */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-0.5 bg-[#0B0C0E] p-0.5 border border-[#1E2127]">
               {[1, 1.25, 1.5, 2].map((rate) => (
                 <button
                   key={rate}
                   onClick={() => setPlaybackRate(rate)}
-                  className={`text-[10px] px-1.5 py-0.5 rounded font-mono transition-colors ${
+                  className={`text-[10px] px-1.5 py-0.5 font-mono transition-colors ${
                     playbackRate === rate
-                      ? 'bg-[#8B7CF6] text-white font-semibold shadow-sm'
-                      : 'text-[#A7A9B0] hover:text-[#F4F3EF]'
+                      ? 'bg-[#C7F36B] text-[#0B0C0E] font-semibold'
+                      : 'text-[#969AA3] hover:text-[#F2EFE8]'
                   }`}
                 >
                   {rate}x
@@ -267,13 +267,16 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = ({ meeting }) => {
               ))}
             </div>
 
-            {/* Volume toggle */}
-            <div className="flex items-center gap-1.5 text-[#A7A9B0] hover:text-[#F4F3EF]">
-              <button onClick={toggleMute} className="p-1 hover:bg-[#1D2025] rounded-md transition-colors">
+            <div className="hidden sm:flex items-center gap-1.5 text-[#969AA3] hover:text-[#F2EFE8]">
+              <button
+                onClick={toggleMute}
+                className="p-1 hover:bg-[#191C20] transition-colors"
+                title="Mute / Unmute"
+              >
                 {isMuted || volume === 0 ? (
-                  <VolumeX className="w-4 h-4 text-rose-400" />
+                  <VolumeX className="w-3.5 h-3.5 text-[#F26464]" />
                 ) : (
-                  <Volume2 className="w-4 h-4" />
+                  <Volume2 className="w-3.5 h-3.5" />
                 )}
               </button>
               <input
@@ -283,44 +286,45 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = ({ meeting }) => {
                 step="0.05"
                 value={isMuted ? 0 : volume}
                 onChange={(e) => setVolume(parseFloat(e.target.value))}
-                className="w-16 h-1 bg-[#23262D] accent-[#8B7CF6] rounded cursor-pointer"
+                className="w-14 h-1 bg-[#1E2127] accent-[#C7F36B] cursor-pointer"
               />
             </div>
           </div>
         </div>
 
-        {/* Clickable Chapter Pills */}
+        {/* Clickable Chapter Index */}
         {meeting.chapters && meeting.chapters.length > 0 && (
-          <div className="pt-2.5 border-t border-[#23262D] flex items-center gap-2 overflow-x-auto select-none">
-            <Bookmark className="w-3.5 h-3.5 text-[#8B7CF6] flex-shrink-0" />
-            <div className="flex items-center gap-1.5">
-              {meeting.chapters.map((chap: Chapter) => {
-                const isChapterActive =
-                  currentTime >= chap.startTime && currentTime <= chap.endTime;
-                return (
-                  <button
-                    key={chap.id}
-                    onClick={() => {
-                      seek(chap.startTime);
-                      if (!isPlaying) play();
-                    }}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 border shadow-sm ${
-                      isChapterActive
-                        ? 'bg-[#8B7CF6]/15 text-[#8B7CF6] border-[#8B7CF6]/35 font-semibold'
-                        : 'bg-[#101114] text-[#A7A9B0] hover:text-[#F4F3EF] border-[#23262D]'
-                    }`}
-                  >
-                    <span>{chap.title}</span>
-                    <span className="text-[10px] font-mono text-[#6F737D]">
-                      {formatTime(chap.startTime)}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+          <div className="pt-2.5 border-t border-[#1E2127] flex items-center gap-1.5 overflow-x-auto select-none">
+            <span className="text-[9px] font-mono uppercase tracking-[0.14em] text-[#5E626B] mr-1 flex-shrink-0">
+              Chapters:
+            </span>
+            {meeting.chapters.map((chap: Chapter) => {
+              const isChapterActive =
+                currentTime >= chap.startTime && currentTime <= chap.endTime;
+              return (
+                <button
+                  key={chap.id}
+                  onClick={() => {
+                    seek(chap.startTime);
+                    if (!isPlaying) play();
+                  }}
+                  className={`px-2 py-1 text-[11px] font-mono whitespace-nowrap transition-colors flex items-center gap-1.5 border ${
+                    isChapterActive
+                      ? 'bg-[#191C20] text-[#C7F36B] border-[#C7F36B]/50 font-semibold'
+                      : 'bg-[#0B0C0E] text-[#969AA3] hover:text-[#F2EFE8] border-[#1E2127]'
+                  }`}
+                >
+                  <span>{chap.title}</span>
+                  <span className="text-[9px] text-[#5E626B]">
+                    {formatTime(chap.startTime)}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
     </div>
   );
 };
+

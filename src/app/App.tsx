@@ -16,22 +16,21 @@ export const App: React.FC = () => {
     loadWorkspaceData();
   }, [loadWorkspaceData]);
 
-
   return (
     <Routes>
       {/* Standalone Public Share View */}
       <Route path="/share/:clipId" element={<ShareClipPage />} />
 
-      {/* Main Workspace Layout */}
+      {/* Main Conversation OS Workspace Layout */}
       <Route
         path="*"
         element={
-          <div className="flex h-screen w-screen bg-[#101114] text-[#F4F3EF] overflow-hidden font-sans antialiased">
-            {/* Sidebar navigation */}
+          <div className="flex h-screen w-screen bg-[#0B0C0E] text-[#F2EFE8] overflow-hidden font-sans antialiased">
+            {/* Minimal Expandable Navigation Rail */}
             <Sidebar onOpenSearch={() => setIsSearchOpen(true)} />
 
-            {/* Main content wrapper */}
-            <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+            {/* Main Workspace Frame */}
+            <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#0B0C0E]">
               <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
 
               <main className="flex-1 overflow-y-auto min-h-0">
@@ -44,7 +43,7 @@ export const App: React.FC = () => {
               </main>
             </div>
 
-            {/* Global Cmd+K Search Palette */}
+            {/* Fanthom Command (Cmd/Ctrl+K) */}
             <GlobalSearchModal
               isOpen={isSearchOpen}
               onClose={() => setIsSearchOpen(false)}

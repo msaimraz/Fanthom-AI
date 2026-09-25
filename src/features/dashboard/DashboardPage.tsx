@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
 import {
   Search,
-  CheckCircle2,
-  Clock,
-  Layers,
-  Sparkles,
-  Send,
   ArrowRight,
   CornerDownLeft,
-  Bookmark,
   Loader2,
   AlertCircle,
   RotateCcw,
@@ -16,21 +10,22 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useMeetingsStore } from '../../store/useMeetingsStore';
 import { MeetingCard } from './MeetingCard';
+import { formatDate, formatDuration } from '../../utils/formatters';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const {
     meetings,
-    profile,
     isLoading,
     error,
     loadWorkspaceData,
     categoryFilter,
     setCategoryFilter,
   } = useMeetingsStore();
+
   const [localSearch, setLocalSearch] = useState('');
-  const [assistantInput, setAssistantInput] = useState('');
-  const [assistantAnswer, setAssistantAnswer] = useState<{
+  const [queryInput, setQueryInput] = useState('');
+  const [queryResult, setQueryResult] = useState<{
     text: string;
     meetingId?: string;
     timestamp?: number;
@@ -60,168 +55,175 @@ export const DashboardPage: React.FC = () => {
     (acc, m) => acc + m.actionItems.filter((a) => !a.completed).length,
     0
   );
+  const totalDecisions = meetings.reduce((acc, m) => {
+    const sum = m.summaries[m.activeTemplateId] || Object.values(m.summaries)[0];
+    return acc + (sum?.keyTakeaways?.length || 0);
+  }, 0);
   const totalHighlights = meetings.reduce(
     (acc, m) => acc + (m.highlights?.length || 0) + (m.clips?.length || 0),
     0
   );
 
-  const handleAskAssistant = (e?: React.FormEvent, customQuery?: string) => {
+  const handleQuerySubmit = (e?: React.FormEvent, customQuery?: string) => {
     if (e) e.preventDefault();
-    const q = (customQuery || assistantInput).trim();
+    const q = (customQuery || queryInput).trim();
     if (!q) return;
 
     if (q.toLowerCase().includes('latency') || q.toLowerCase().includes('david')) {
-      setAssistantAnswer({
-        text: `David Chen at Acme Corp requires sub-80ms p99 latency at 10,000 RPM for their real-time telemetry pipeline. Sarah confirmed CloudScale averages 42ms p99 on AWS us-east-1 and can run a private benchmark.`,
+      setQueryResult({
+        text: `David Chen (Acme Corp) requires sub-80ms p99 latency at 10,000 RPM for their telemetry stream. Sarah Lin confirmed CloudScale averages 42ms p99 on AWS us-east-1 and committed to running a dedicated Redis shard benchmark.`,
         meetingId: 'enterprise-sales-discovery-acme',
         timestamp: 22.7,
       });
-    } else if (q.toLowerCase().includes('security') || q.toLowerCase().includes('elena') || q.toLowerCase().includes('soc2')) {
-      setAssistantAnswer({
-        text: `Elena Rostova confirmed procurement will review vendor security in OneTrust. Sarah Lin agreed to provide the SOC2 Type II packet, penetration test report, and DPA addendum by Wednesday.`,
+    } else if (
+      q.toLowerCase().includes('security') ||
+      q.toLowerCase().includes('elena') ||
+      q.toLowerCase().includes('soc2')
+    ) {
+      setQueryResult({
+        text: `Decision: Elena Rostova confirmed procurement will fast-track security review in OneTrust once Sarah Lin delivers the SOC2 Type II packet, pen-test report, and DPA addendum by Wednesday.`,
         meetingId: 'enterprise-sales-discovery-acme',
         timestamp: 68.4,
       });
-    } else if (q.toLowerCase().includes('action') || q.toLowerCase().includes('task')) {
-      setAssistantAnswer({
-        text: `You have ${pendingActions} open follow-up items across ${meetings.length} meetings, including: Benchmark latency at 10k RPM (Sarah), Send SOC2 packet & DPA (Sarah), and Schedule architecture deep-dive (Elena).`,
+    } else if (q.toLowerCase().includes('action') || q.toLowerCase().includes('follow')) {
+      setQueryResult({
+        text: `${pendingActions} open follow-ups across ${meetings.length} conversations: Benchmark latency at 10k RPM (Sarah Lin), Deliver SOC2 packet & DPA (Sarah Lin), and Schedule architecture review (Elena Rostova).`,
         meetingId: 'enterprise-sales-discovery-acme',
         timestamp: 105.0,
       });
     } else {
-      setAssistantAnswer({
-        text: `From your workspace: David Chen at Acme Corp requires sub-80ms p99 latency at 10,000 RPM. Elena confirmed procurement will review vendor security in OneTrust once Sarah sends the SOC2 Type II packet by Wednesday.`,
+      setQueryResult({
+        text: `Matched in Enterprise Sales Discovery: David Chen requires sub-80ms p99 latency at 10,000 RPM; Elena Rostova approved parallel OneTrust security review upon receipt of SOC2 Type II documentation.`,
         meetingId: 'enterprise-sales-discovery-acme',
         timestamp: 22.7,
       });
     }
   };
 
-  const suggestions = [
-    "What were David Chen's latency requirements?",
-    "Show Elena's security & procurement next steps",
-    "List all uncompleted action items",
+  const quickQueries = [
+    "David Chen's latency requirements",
+    'OneTrust security & SOC2 decision',
+    'Open follow-ups across conversations',
   ];
 
+  // Partition into TODAY (first 3 conversations) and THIS WEEK (remaining / full compact ledger)
+  const todayMeetings = filteredMeetings.slice(0, 3);
+  const thisWeekMeetings =
+    filteredMeetings.length > 3 ? filteredMeetings.slice(3) : filteredMeetings;
+
   return (
-    <div className="max-w-5xl mx-auto px-6 py-7 space-y-6">
-      {/* Editorial Workspace Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-1">
+    <div className="max-w-5xl mx-auto px-6 py-8 space-y-8">
+      {/* Masthead: FANTHOM / Conversation workspace + Secondary Index Metrics */}
+      <div className="border-b border-[#1E2127] pb-6 flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div>
-          <p className="text-[11px] font-mono uppercase tracking-wider text-[#8B7CF6] mb-1 font-medium">
-            Your conversation workspace
-          </p>
-          <h1 className="text-[22px] font-semibold text-[#F4F3EF] tracking-tight">
-            Good evening, {profile?.name?.split(' ')[0] || 'Sarah'}
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="w-2 h-2 bg-[#C7F36B]" />
+            <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-[#C7F36B] font-semibold">
+              FANTHOM
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-[26px] font-semibold text-[#F2EFE8] tracking-tight leading-tight">
+            Conversation workspace
           </h1>
-          <p className="text-[13px] text-[#A7A9B0] mt-1">
-            Review recorded conversations, key decisions, and open follow-ups across your team.
+          <p className="text-xs text-[#969AA3] mt-1 font-mono">
+            Chronological index of recorded conversations, structural threads, decisions, and follow-ups.
           </p>
         </div>
 
-        {/* Workspace Stat Pills */}
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#17191D] border border-[#23262D] rounded-lg text-xs">
-            <Layers className="w-3.5 h-3.5 text-[#8B7CF6]" />
-            <span className="font-semibold text-[#F4F3EF] font-mono text-[11px]">{meetings.length}</span>
-            <span className="text-[#A7A9B0] text-[11px]">Meetings</span>
+        {/* Secondary Compact Metrics Ledger (No large SaaS cards) */}
+        <div className="flex items-center gap-5 text-xs font-mono border-t lg:border-t-0 pt-3 lg:pt-0 border-[#1E2127] flex-wrap">
+          <div>
+            <span className="text-[#5E626B] uppercase text-[10px] block">Indexed</span>
+            <span className="text-[#F2EFE8] font-semibold">{meetings.length} calls</span>
+            <span className="text-[#969AA3] ml-1">({totalDurationMinutes}m)</span>
           </div>
-
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#17191D] border border-[#23262D] rounded-lg text-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#55C89A]" />
-            <span className="font-semibold text-[#F4F3EF] font-mono text-[11px]">{pendingActions}</span>
-            <span className="text-[#A7A9B0] text-[11px]">Follow-ups</span>
+          <div className="h-6 w-[1px] bg-[#1E2127]" />
+          <div>
+            <span className="text-[#5E626B] uppercase text-[10px] block">Decisions</span>
+            <span className="text-[#F0B449] font-semibold">{totalDecisions}</span>
           </div>
-
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#17191D] border border-[#23262D] rounded-lg text-xs">
-            <Bookmark className="w-3.5 h-3.5 text-[#E7B45C]" />
-            <span className="font-semibold text-[#F4F3EF] font-mono text-[11px]">{totalHighlights}</span>
-            <span className="text-[#A7A9B0] text-[11px]">Highlights</span>
+          <div className="h-6 w-[1px] bg-[#1E2127]" />
+          <div>
+            <span className="text-[#5E626B] uppercase text-[10px] block">Follow-ups</span>
+            <span className="text-[#47D18C] font-semibold">{pendingActions} open</span>
           </div>
-
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#17191D] border border-[#23262D] rounded-lg text-xs">
-            <Clock className="w-3.5 h-3.5 text-[#A7A9B0]" />
-            <span className="font-semibold text-[#F4F3EF] font-mono text-[11px]">{totalDurationMinutes}m</span>
+          <div className="h-6 w-[1px] bg-[#1E2127]" />
+          <div>
+            <span className="text-[#5E626B] uppercase text-[10px] block">Highlights</span>
+            <span className="text-[#C7F36B] font-semibold">{totalHighlights}</span>
           </div>
         </div>
       </div>
 
-      {/* Meeting Assistant Query Box */}
-      <div className="p-4 rounded-xl bg-[#17191D] border border-[#23262D] flex flex-col gap-3 shadow-sm">
-        <form onSubmit={(e) => handleAskAssistant(e)} className="flex items-center gap-2.5">
-          <div className="flex items-center gap-2 text-[#F4F3EF] font-semibold text-xs flex-shrink-0">
-            <div className="w-6 h-6 rounded-md bg-[#8B7CF6]/15 border border-[#8B7CF6]/30 flex items-center justify-center">
-              <Sparkles className="w-3.5 h-3.5 text-[#8B7CF6]" />
-            </div>
-            <span className="hidden sm:inline">Meeting Assistant</span>
-          </div>
+      {/* Product-Oriented Ask / Find Bar */}
+      <div className="bg-[#121417] border border-[#1E2127] p-3.5 space-y-2.5">
+        <form onSubmit={(e) => handleQuerySubmit(e)} className="flex items-center gap-2.5">
+          <span className="text-[10px] font-mono uppercase tracking-[0.14em] px-2 py-1 bg-[#0B0C0E] text-[#C7F36B] border border-[#1E2127] flex-shrink-0">
+            Ask / Find
+          </span>
           <input
             type="text"
-            placeholder="Ask anything across your meetings (e.g. 'What were David's latency requirements?')"
-            value={assistantInput}
-            onChange={(e) => setAssistantInput(e.target.value)}
-            className="flex-1 bg-[#101114] border border-[#23262D] rounded-lg px-3.5 py-2 text-xs text-[#F4F3EF] placeholder-[#6F737D] focus:outline-none focus:border-[#8B7CF6] transition-all"
+            placeholder="Find decisions, questions, risks, or follow-ups across conversations..."
+            value={queryInput}
+            onChange={(e) => setQueryInput(e.target.value)}
+            className="flex-1 bg-[#0B0C0E] border border-[#1E2127] px-3 py-1.5 text-xs text-[#F2EFE8] placeholder-[#5E626B] focus:outline-none focus:border-[#C7F36B] transition-colors"
           />
           <button
             type="submit"
-            className="px-3.5 py-2 bg-[#8B7CF6] hover:bg-[#9D91FF] text-white text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 shadow-sm shadow-[#8B7CF6]/20 active:scale-95 flex-shrink-0"
+            className="px-3.5 py-1.5 bg-[#C7F36B] hover:bg-[#d4f788] text-[#0B0C0E] text-xs font-mono font-semibold uppercase tracking-wider transition-colors flex-shrink-0"
           >
-            <Send className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Ask</span>
+            Ask
           </button>
         </form>
 
-        {/* Prompt Suggestion Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto select-none pt-0.5">
-          <span className="text-[10px] text-[#6F737D] uppercase font-mono tracking-wider flex-shrink-0 mr-1">
-            Prompts:
+        {/* Quick Query Triggers */}
+        <div className="flex items-center gap-2 overflow-x-auto select-none">
+          <span className="text-[10px] text-[#5E626B] uppercase font-mono tracking-wider flex-shrink-0">
+            Find:
           </span>
-          {suggestions.map((suggestion) => (
+          {quickQueries.map((q) => (
             <button
-              key={suggestion}
+              key={q}
               onClick={() => {
-                setAssistantInput(suggestion);
-                handleAskAssistant(undefined, suggestion);
+                setQueryInput(q);
+                handleQuerySubmit(undefined, q);
               }}
-              className="px-2.5 py-1 rounded-md bg-[#101114] hover:bg-[#1D2025] text-[#A7A9B0] hover:text-[#F4F3EF] border border-[#23262D] hover:border-[#8B7CF6]/40 text-[11px] whitespace-nowrap transition-all flex items-center gap-1.5"
+              className="px-2 py-0.5 bg-[#0B0C0E] hover:bg-[#191C20] text-[#969AA3] hover:text-[#F2EFE8] border border-[#1E2127] hover:border-[#272B33] text-[11px] font-mono whitespace-nowrap transition-colors flex items-center gap-1.5"
             >
-              <span>{suggestion}</span>
-              <CornerDownLeft className="w-2.5 h-2.5 opacity-60" />
+              <span>{q}</span>
+              <CornerDownLeft className="w-2.5 h-2.5 text-[#5E626B]" />
             </button>
           ))}
         </div>
 
-        {/* Assistant Answer Card */}
-        {assistantAnswer && (
-          <div className="p-3.5 bg-[#101114] border border-[#8B7CF6]/35 rounded-lg text-xs text-[#F4F3EF] leading-relaxed animate-in fade-in duration-150 flex flex-col gap-2.5">
+        {/* Query Response Readout */}
+        {queryResult && (
+          <div className="p-3 bg-[#0B0C0E] border-l-2 border-[#C7F36B] border border-[#1E2127] text-xs text-[#F2EFE8] space-y-2">
             <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-2.5">
-                <Sparkles className="w-4 h-4 text-[#8B7CF6] flex-shrink-0 mt-0.5" />
-                <p className="text-[#F4F3EF] text-xs leading-relaxed">{assistantAnswer.text}</p>
-              </div>
+              <p className="text-xs leading-relaxed text-[#F2EFE8]">{queryResult.text}</p>
               <button
-                onClick={() => setAssistantAnswer(null)}
-                className="text-[#6F737D] hover:text-[#F4F3EF] text-[10px] font-mono flex-shrink-0 px-1.5 py-0.5 rounded hover:bg-[#1D2025]"
+                onClick={() => setQueryResult(null)}
+                className="text-[#969AA3] hover:text-[#F2EFE8] text-[10px] font-mono flex-shrink-0 px-1.5 py-0.5 border border-[#1E2127]"
               >
-                Dismiss
+                Close
               </button>
             </div>
 
-            {assistantAnswer.meetingId && (
-              <div className="flex items-center justify-between pt-2 border-t border-[#23262D]">
-                <span className="text-[10px] text-[#6F737D] font-mono">
-                  Source: Acme Corp Discovery Call
+            {queryResult.meetingId && (
+              <div className="flex items-center justify-between pt-2 border-t border-[#1E2127] font-mono text-[11px]">
+                <span className="text-[#969AA3]">
+                  Source: Enterprise Sales Discovery (00:22)
                 </span>
                 <button
                   onClick={() =>
                     navigate(
-                      `/meetings/${assistantAnswer.meetingId}?t=${assistantAnswer.timestamp}&tab=transcript`
+                      `/meetings/${queryResult.meetingId}?t=${queryResult.timestamp}&tab=transcript`
                     )
                   }
-                  className="flex items-center gap-1 text-[11px] text-[#8B7CF6] hover:text-[#9D91FF] font-medium group"
+                  className="flex items-center gap-1 text-[#C7F36B] hover:underline font-medium"
                 >
-                  <span>Jump to moment in call</span>
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  <span>Open conversation at timestamp</span>
+                  <ArrowRight className="w-3 h-3" />
                 </button>
               </div>
             )}
@@ -229,25 +231,24 @@ export const DashboardPage: React.FC = () => {
         )}
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-3 border-b border-[#23262D]">
-        {/* Category Filter Tabs */}
-        <div className="flex items-center gap-1 bg-[#17191D] p-1 rounded-lg border border-[#23262D] overflow-x-auto">
+      {/* Stream Filter & Local Filter Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-b border-[#1E2127] pb-3">
+        <div className="flex items-center gap-1 overflow-x-auto font-mono">
           {[
-            { id: 'all', label: 'All Meetings' },
-            { id: 'customer', label: 'Customer Deals' },
-            { id: 'team', label: 'Engineering & Ops' },
-            { id: 'one_on_one', label: '1-on-1s' },
+            { id: 'all', label: 'All Conversations' },
+            { id: 'customer', label: 'Customer' },
+            { id: 'team', label: 'Engineering' },
+            { id: 'one_on_one', label: '1-on-1' },
           ].map((tab) => {
             const isActive = categoryFilter === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setCategoryFilter(tab.id as any)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap ${
+                className={`px-3 py-1 text-xs transition-colors whitespace-nowrap border ${
                   isActive
-                    ? 'bg-[#8B7CF6] text-white font-semibold shadow-sm'
-                    : 'text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025]'
+                    ? 'bg-[#191C20] text-[#C7F36B] border-[#C7F36B]/50 font-semibold'
+                    : 'bg-transparent text-[#969AA3] hover:text-[#F2EFE8] border-transparent hover:border-[#1E2127]'
                 }`}
               >
                 {tab.label}
@@ -256,82 +257,161 @@ export const DashboardPage: React.FC = () => {
           })}
         </div>
 
-        {/* Search Input */}
         <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 text-[#6F737D] absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-[#5E626B] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Filter calls or attendees..."
+            placeholder="Filter timeline..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            className="w-full bg-[#17191D] border border-[#23262D] rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#F4F3EF] placeholder-[#6F737D] focus:outline-none focus:border-[#8B7CF6] transition-colors"
+            className="w-full bg-[#121417] border border-[#1E2127] pl-8 pr-3 py-1 text-xs text-[#F2EFE8] placeholder-[#5E626B] focus:outline-none focus:border-[#C7F36B] transition-colors font-mono"
           />
         </div>
       </div>
 
-      {/* Section Header: Recorded Conversations */}
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono">
-          Recorded Conversations
-        </span>
-        <span className="text-[11px] font-mono text-[#6F737D]">
-          Showing {filteredMeetings.length} of {meetings.length}
-        </span>
-      </div>
-
-      {/* Editorial Conversation Timeline List */}
+      {/* Loading / Error / Empty States */}
       {isLoading && meetings.length === 0 ? (
-        <div className="py-20 text-center border border-[#23262D] rounded-xl p-6 bg-[#17191D] flex flex-col items-center justify-center gap-3">
-          <Loader2 className="w-6 h-6 text-[#8B7CF6] animate-spin" />
-          <p className="text-xs font-semibold text-[#F4F3EF]">Loading meetings...</p>
-          <p className="text-[11px] text-[#A7A9B0]">
-            Fetching recorded conversations and insights from workspace database.
+        <div className="py-20 text-center border border-[#1E2127] p-6 bg-[#121417] flex flex-col items-center justify-center gap-3">
+          <Loader2 className="w-5 h-5 text-[#C7F36B] animate-spin" />
+          <p className="text-xs font-mono uppercase tracking-wider text-[#F2EFE8]">
+            Loading conversation timeline...
           </p>
         </div>
       ) : error && meetings.length === 0 ? (
-        <div className="py-16 text-center border border-[#23262D] rounded-xl p-6 bg-[#17191D] flex flex-col items-center justify-center gap-3">
-          <AlertCircle className="w-7 h-7 text-rose-400" />
-          <p className="text-xs font-semibold text-[#F4F3EF]">
-            Unable to load workspace meetings.
-          </p>
-          <p className="text-[11px] text-[#A7A9B0] max-w-md">
-            Please verify your connection and workspace database configuration.
+        <div className="py-16 text-center border border-[#1E2127] p-6 bg-[#121417] flex flex-col items-center justify-center gap-3">
+          <AlertCircle className="w-6 h-6 text-[#F26464]" />
+          <p className="text-xs font-semibold text-[#F2EFE8]">
+            Unable to load workspace conversations.
           </p>
           <button
             onClick={() => loadWorkspaceData()}
-            className="mt-1 flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#8B7CF6] hover:bg-[#9D91FF] rounded-lg transition-colors shadow-sm shadow-[#8B7CF6]/20"
+            className="mt-1 flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono font-semibold text-[#0B0C0E] bg-[#C7F36B]"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Retry</span>
           </button>
         </div>
-      ) : meetings.length === 0 ? (
-        <div className="py-16 text-center border border-dashed border-[#23262D] rounded-xl p-6 bg-[#17191D]">
-          <Layers className="w-8 h-8 text-[#6F737D] mx-auto mb-2" />
-          <p className="text-xs font-semibold text-[#F4F3EF]">No meetings in this workspace yet</p>
-          <p className="text-[11px] text-[#A7A9B0] mt-1">
-            Run the workspace seed script to populate your initial recorded conversations.
+      ) : filteredMeetings.length === 0 ? (
+        <div className="py-16 text-center border border-[#1E2127] p-6 bg-[#121417]">
+          <p className="text-xs font-mono text-[#969AA3]">
+            No conversations match the active filter.
           </p>
-        </div>
-      ) : filteredMeetings.length > 0 ? (
-        <div className="flex flex-col gap-3">
-          {filteredMeetings.map((meeting) => (
-            <MeetingCard key={meeting.id} meeting={meeting} />
-          ))}
-        </div>
-      ) : (
-        <div className="py-16 text-center border border-dashed border-[#23262D] rounded-xl p-6 bg-[#17191D]">
-          <Layers className="w-8 h-8 text-[#6F737D] mx-auto mb-2" />
-          <p className="text-xs font-semibold text-[#F4F3EF]">No conversations match your filter</p>
           <button
             onClick={() => {
               setCategoryFilter('all');
               setLocalSearch('');
             }}
-            className="mt-3 px-3 py-1.5 text-xs font-medium text-[#8B7CF6] bg-[#8B7CF6]/10 hover:bg-[#8B7CF6]/20 rounded-md transition-colors border border-[#8B7CF6]/25"
+            className="mt-3 px-3 py-1 text-xs font-mono text-[#C7F36B] border border-[#C7F36B]/40 hover:bg-[#191C20]"
           >
-            Reset Filters
+            Reset Filter
           </button>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {/* SECTION 1: TODAY — Primary Conversation Timeline */}
+          <section className="space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-2.5">
+                <span className="text-[11px] font-mono font-semibold uppercase tracking-[0.16em] text-[#C7F36B]">
+                  TODAY
+                </span>
+                <span className="text-[11px] font-mono text-[#5E626B]">
+                  — Active Conversation Stream
+                </span>
+              </div>
+              <div className="hidden sm:flex items-center gap-3 text-[10px] font-mono text-[#969AA3]">
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-[#C7F36B]" /> Topic
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-[#F0B449]" /> Decision
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-[#47D18C]" /> Action
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-[#F26464]" /> Risk
+                </span>
+              </div>
+            </div>
+
+            <div className="border-t border-l border-r border-[#1E2127] bg-[#0B0C0E]">
+              {todayMeetings.map((meeting, idx) => {
+                const slots = ['09:42', '11:18', '14:06'];
+                return (
+                  <MeetingCard
+                    key={meeting.id}
+                    meeting={meeting}
+                    timeSlot={slots[idx] || '16:30'}
+                  />
+                );
+              })}
+            </div>
+          </section>
+
+          {/* SECTION 2: THIS WEEK — Compact Conversation History */}
+          <section className="space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-2.5">
+                <span className="text-[11px] font-mono font-semibold uppercase tracking-[0.16em] text-[#969AA3]">
+                  THIS WEEK
+                </span>
+                <span className="text-[11px] font-mono text-[#5E626B]">
+                  — Compact Conversation History
+                </span>
+              </div>
+              <span className="text-[10px] font-mono text-[#5E626B]">
+                {filteredMeetings.length} recorded sessions
+              </span>
+            </div>
+
+            <div className="border-t border-l border-r border-[#1E2127] bg-[#0B0C0E]">
+              {thisWeekMeetings.map((meeting) => (
+                <MeetingCard
+                  key={`week-${meeting.id}`}
+                  meeting={meeting}
+                  timeSlot="16:30"
+                  compact
+                />
+              ))}
+            </div>
+
+            {/* Compact Weekly Archive Ledger Table */}
+            <div className="border border-[#1E2127] bg-[#121417] divide-y divide-[#1E2127]">
+              {meetings.map((m) => {
+                const openTasks = m.actionItems.filter((a) => !a.completed).length;
+                const sum =
+                  m.summaries[m.activeTemplateId] || Object.values(m.summaries)[0];
+                return (
+                  <div
+                    key={`ledger-${m.id}`}
+                    onClick={() => navigate(`/meetings/${m.id}`)}
+                    className="px-4 py-2.5 flex items-center justify-between gap-4 hover:bg-[#191C20] cursor-pointer transition-colors text-xs"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="font-mono text-[10px] text-[#5E626B] w-20 flex-shrink-0">
+                        {formatDate(m.date)}
+                      </span>
+                      <span className="text-[#F2EFE8] font-medium truncate">
+                        {m.title}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4 flex-shrink-0 font-mono text-[11px]">
+                      <span className="text-[#F0B449] hidden sm:inline">
+                        {sum?.keyTakeaways?.length || 0} decisions
+                      </span>
+                      <span className="text-[#47D18C]">
+                        {m.actionItems.length - openTasks}/{m.actionItems.length} follow-ups
+                      </span>
+                      <span className="text-[#969AA3] w-12 text-right">
+                        {formatDuration(m.durationSeconds)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
         </div>
       )}
     </div>

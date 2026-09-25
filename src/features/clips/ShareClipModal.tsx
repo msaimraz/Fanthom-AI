@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Share2,
   Copy,
   Check,
   Globe,
@@ -52,61 +51,59 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 select-none">
-      <div className="w-full max-w-lg bg-[#17191D] border border-[#23262D] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 select-none">
+      <div className="w-full max-w-lg bg-[#121417] border border-[#272B33] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="p-3.5 border-b border-[#23262D] flex items-center justify-between bg-[#17191D]">
+        <div className="px-4 py-3 border-b border-[#1E2127] flex items-center justify-between bg-[#0B0C0E]">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[#8B7CF6]/15 text-[#8B7CF6] flex items-center justify-center">
-              <Share2 className="w-3.5 h-3.5" />
-            </div>
+            <span className="w-1.5 h-1.5 bg-[#C7F36B]" />
             <div>
-              <h3 className="text-xs font-bold text-[#F4F3EF] uppercase tracking-wider">Share Clip</h3>
-              <p className="text-[10px] text-[#A7A9B0] font-mono">
+              <h3 className="text-xs font-mono font-semibold text-[#F2EFE8] uppercase tracking-[0.14em]">
+                Share Clip
+              </h3>
+              <p className="text-[10px] text-[#969AA3] font-mono">
                 {formatTime(clip.startTime)} – {formatTime(clip.endTime)}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[#A7A9B0] hover:text-[#F4F3EF] rounded"
+            className="p-1 text-[#969AA3] hover:text-[#F2EFE8]"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-4 space-y-3.5">
-          {/* Clip preview title */}
-          <div className="p-2.5 bg-[#101114] border border-[#23262D] rounded-lg">
-            <h4 className="text-xs font-semibold text-[#F4F3EF] mb-0.5">{clip.title}</h4>
+        <div className="p-4 space-y-4">
+          <div className="p-3 bg-[#0B0C0E] border-l-2 border-l-[#C7F36B] border border-[#1E2127]">
+            <h4 className="text-xs font-semibold text-[#F2EFE8] mb-0.5">{clip.title}</h4>
             {clip.quote && (
-              <p className="text-[11px] text-[#A7A9B0] italic line-clamp-2">
+              <p className="text-[11px] text-[#969AA3] line-clamp-2">
                 "{clip.quote}"
               </p>
             )}
           </div>
 
-          {/* Share Link Row */}
           <div>
-            <label className="block text-xs font-semibold text-[#F4F3EF] mb-1">
-              Link
+            <label className="block text-[10px] font-mono uppercase tracking-[0.12em] text-[#969AA3] mb-1.5">
+              Shareable Link
             </label>
             <div className="flex items-center gap-2">
               <input
                 type="text"
                 readOnly
                 value={shareUrl}
-                className="flex-1 bg-[#101114] border border-[#23262D] rounded-lg px-3 py-1.5 text-xs font-mono text-[#A7A9B0] select-all focus:outline-none"
+                className="flex-1 bg-[#0B0C0E] border border-[#1E2127] px-3 py-1.5 text-xs font-mono text-[#969AA3] select-all focus:outline-none"
               />
               <button
                 onClick={handleCopyLink}
-                className="flex items-center gap-1 px-3 py-1.5 bg-[#8B7CF6] hover:bg-[#9D91FF] text-white rounded-lg text-xs font-semibold transition-all shadow-sm shadow-[#8B7CF6]/20"
+                className="flex items-center gap-1 px-3 py-1.5 bg-[#C7F36B] hover:bg-[#d4f788] text-[#0B0C0E] text-xs font-mono font-semibold transition-colors"
               >
                 {copied ? (
                   <>
                     <Check className="w-3.5 h-3.5" />
-                    <span>Copied!</span>
+                    <span>Copied</span>
                   </>
                 ) : (
                   <>
@@ -118,64 +115,62 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
             </div>
           </div>
 
-          {/* Permissions Selector */}
           <div>
-            <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] mb-1">
-              Access
+            <label className="block text-[10px] font-mono uppercase tracking-[0.12em] text-[#969AA3] mb-1.5">
+              Access Control
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setAccessLevel('public')}
-                className={`p-2.5 rounded-lg border text-left flex items-start gap-2 transition-all ${
+                className={`p-2.5 border text-left flex items-start gap-2 transition-colors ${
                   accessLevel === 'public'
-                    ? 'bg-[#8B7CF6]/15 border-[#8B7CF6]/40 text-[#F4F3EF]'
-                    : 'bg-[#101114] border-[#23262D] text-[#A7A9B0] hover:text-[#F4F3EF]'
+                    ? 'bg-[#191C20] border-[#C7F36B]/50 text-[#F2EFE8]'
+                    : 'bg-[#0B0C0E] border-[#1E2127] text-[#969AA3]'
                 }`}
               >
-                <Globe className="w-3.5 h-3.5 text-[#8B7CF6] flex-shrink-0 mt-0.5" />
+                <Globe className="w-3.5 h-3.5 text-[#C7F36B] flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-semibold">Anyone with link</p>
-                  <p className="text-[10px] text-[#6F737D]">Public web preview</p>
+                  <p className="text-[10px] font-mono text-[#5E626B]">Public playback</p>
                 </div>
               </button>
 
               <button
                 onClick={() => setAccessLevel('workspace')}
-                className={`p-2.5 rounded-lg border text-left flex items-start gap-2 transition-all ${
+                className={`p-2.5 border text-left flex items-start gap-2 transition-colors ${
                   accessLevel === 'workspace'
-                    ? 'bg-[#8B7CF6]/15 border-[#8B7CF6]/40 text-[#F4F3EF]'
-                    : 'bg-[#101114] border-[#23262D] text-[#A7A9B0] hover:text-[#F4F3EF]'
+                    ? 'bg-[#191C20] border-[#C7F36B]/50 text-[#F2EFE8]'
+                    : 'bg-[#0B0C0E] border-[#1E2127] text-[#969AA3]'
                 }`}
               >
-                <Lock className="w-3.5 h-3.5 text-[#E7B45C] flex-shrink-0 mt-0.5" />
+                <Lock className="w-3.5 h-3.5 text-[#F0B449] flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-semibold">Workspace only</p>
-                  <p className="text-[10px] text-[#6F737D]">Requires login</p>
+                  <p className="text-[10px] font-mono text-[#5E626B]">Members only</p>
                 </div>
               </button>
             </div>
           </div>
 
-          {/* Embed Option */}
-          <div className="pt-2 border-t border-[#23262D] flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs text-[#A7A9B0]">
-              <Code className="w-3 h-3 text-[#6F737D]" />
-              <span>HTML Video Embed</span>
+          <div className="pt-2 border-t border-[#1E2127] flex items-center justify-between font-mono text-xs">
+            <div className="flex items-center gap-1.5 text-[#969AA3]">
+              <Code className="w-3.5 h-3.5 text-[#5E626B]" />
+              <span>Embed Snippet</span>
             </div>
             <button
               onClick={handleCopyEmbed}
-              className="text-xs text-[#8B7CF6] hover:text-[#9D91FF] transition-colors font-medium"
+              className="text-[#C7F36B] hover:underline"
             >
-              {embedCopied ? 'Embed Copied!' : 'Copy Embed Code'}
+              {embedCopied ? 'Copied' : 'Copy Iframe'}
             </button>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-3.5 border-t border-[#23262D] bg-[#17191D] flex items-center justify-between">
+        <div className="px-4 py-3 border-t border-[#1E2127] bg-[#0B0C0E] flex items-center justify-between font-mono">
           <button
             onClick={handleOpenPage}
-            className="flex items-center gap-1 text-xs font-medium text-[#8B7CF6] hover:text-[#9D91FF] transition-colors"
+            className="flex items-center gap-1 text-xs text-[#C7F36B] hover:underline"
           >
             <span>Open Public Clip Page</span>
             <ExternalLink className="w-3 h-3" />
@@ -183,7 +178,7 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
 
           <button
             onClick={onClose}
-            className="px-3 py-1 text-xs font-semibold bg-[#1D2025] hover:bg-[#23262D] text-[#F4F3EF] rounded-md transition-colors"
+            className="px-3 py-1 text-xs font-semibold bg-[#191C20] hover:bg-[#272B33] text-[#F2EFE8] border border-[#1E2127]"
           >
             Done
           </button>
@@ -192,3 +187,4 @@ export const ShareClipModal: React.FC<ShareClipModalProps> = ({
     </div>
   );
 };
+

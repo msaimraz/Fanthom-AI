@@ -6,7 +6,6 @@ import {
   RotateCcw,
   Volume2,
   ExternalLink,
-  Quote,
   Loader2,
   AlertCircle,
 } from 'lucide-react';
@@ -79,24 +78,25 @@ export const ShareClipPage: React.FC = () => {
 
   if ((storeLoading || isFetchingClip) && (!targetMeeting || !targetClip)) {
     return (
-      <div className="min-h-screen bg-[#101114] flex flex-col items-center justify-center p-6 text-center gap-3">
-        <Loader2 className="w-7 h-7 text-[#8B7CF6] animate-spin" />
-        <h2 className="text-sm font-semibold text-[#F4F3EF]">Loading shared clip...</h2>
-        <p className="text-xs text-[#A7A9B0]">Retrieving clip and transcript from workspace database...</p>
+      <div className="min-h-screen bg-[#0B0C0E] flex flex-col items-center justify-center p-6 text-center gap-3">
+        <Loader2 className="w-6 h-6 text-[#C7F36B] animate-spin" />
+        <h2 className="text-sm font-mono uppercase tracking-wider text-[#F2EFE8]">
+          Loading shared conversation clip...
+        </h2>
       </div>
     );
   }
 
   if (fetchError && (!targetMeeting || !targetClip)) {
     return (
-      <div className="min-h-screen bg-[#101114] flex flex-col items-center justify-center p-6 text-center gap-3">
-        <AlertCircle className="w-7 h-7 text-rose-400" />
-        <h2 className="text-base font-bold text-[#F4F3EF]">{fetchError}</h2>
+      <div className="min-h-screen bg-[#0B0C0E] flex flex-col items-center justify-center p-6 text-center gap-3">
+        <AlertCircle className="w-6 h-6 text-[#F26464]" />
+        <h2 className="text-base font-semibold text-[#F2EFE8]">{fetchError}</h2>
         <button
           onClick={() => navigate('/meetings')}
-          className="px-3.5 py-1.5 bg-[#8B7CF6] hover:bg-[#9D91FF] text-white text-xs font-semibold rounded-lg transition-colors"
+          className="px-3.5 py-1.5 bg-[#C7F36B] text-[#0B0C0E] text-xs font-mono font-semibold"
         >
-          Explore Fanthom Workspace
+          Open Fanthom Workspace
         </button>
       </div>
     );
@@ -104,16 +104,16 @@ export const ShareClipPage: React.FC = () => {
 
   if (!targetMeeting || !targetClip) {
     return (
-      <div className="min-h-screen bg-[#101114] flex flex-col items-center justify-center p-6 text-center">
-        <h2 className="text-base font-bold text-[#F4F3EF] mb-1.5">Clip Not Found</h2>
-        <p className="text-xs text-[#A7A9B0] mb-4">
-          This shared clip may have expired or been removed.
+      <div className="min-h-screen bg-[#0B0C0E] flex flex-col items-center justify-center p-6 text-center">
+        <h2 className="text-base font-semibold text-[#F2EFE8] mb-1.5">Clip Not Found</h2>
+        <p className="text-xs text-[#969AA3] mb-4">
+          This shared conversation clip does not exist.
         </p>
         <button
           onClick={() => navigate('/meetings')}
-          className="px-3.5 py-1.5 bg-[#8B7CF6] hover:bg-[#9D91FF] text-white text-xs font-semibold rounded-lg transition-colors"
+          className="px-3.5 py-1.5 bg-[#C7F36B] text-[#0B0C0E] text-xs font-mono font-semibold"
         >
-          Explore Fanthom Workspace
+          Open Fanthom Workspace
         </button>
       </div>
     );
@@ -164,28 +164,27 @@ export const ShareClipPage: React.FC = () => {
     }
   };
 
-  const activeTurn = targetMeeting.transcript.find(
-    (t) => currentTime >= t.startTime && currentTime <= t.endTime
-  ) || null;
+  const activeTurn =
+    targetMeeting.transcript.find(
+      (t) => currentTime >= t.startTime && currentTime <= t.endTime
+    ) || null;
 
   return (
-    <div className="min-h-screen bg-[#101114] text-[#F4F3EF] flex flex-col justify-between select-none">
+    <div className="min-h-screen bg-[#0B0C0E] text-[#F2EFE8] flex flex-col justify-between select-none">
       {/* Top public banner */}
-      <header className="h-14 border-b border-[#23262D] bg-[#17191D]/95 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-10">
+      <header className="h-12 border-b border-[#1E2127] bg-[#0B0C0E] px-6 flex items-center justify-between sticky top-0 z-10">
         <div
-          className="flex items-center gap-2.5 cursor-pointer group"
+          className="flex items-center gap-2.5 cursor-pointer"
           onClick={() => navigate('/meetings')}
         >
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#8B7CF6] to-[#6355D8] flex items-center justify-center shadow-sm shadow-[#8B7CF6]/20">
-            <span className="font-bold text-xs text-white font-mono">F</span>
+          <div className="w-6 h-6 bg-[#C7F36B] text-[#0B0C0E] flex items-center justify-center font-mono font-bold text-xs">
+            F
           </div>
-          <div className="flex items-baseline gap-1">
-            <span className="font-semibold text-sm tracking-tight text-[#F4F3EF]">
-              Fanthom
-            </span>
-          </div>
-          <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded bg-[#1D2025] text-[#8B7CF6] ml-1 border border-[#8B7CF6]/25">
-            Public Clip
+          <span className="font-mono font-semibold text-xs tracking-[0.14em] uppercase text-[#F2EFE8]">
+            FANTHOM
+          </span>
+          <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 bg-[#121417] text-[#C7F36B] border border-[#1E2127]">
+            Shared Clip
           </span>
         </div>
 
@@ -193,16 +192,16 @@ export const ShareClipPage: React.FC = () => {
           onClick={() =>
             navigate(`/meetings/${targetMeeting.id}?t=${targetClip.startTime}`)
           }
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8B7CF6] hover:bg-[#9D91FF] text-white text-xs font-semibold shadow-sm shadow-[#8B7CF6]/20 transition-all active:scale-95"
+          className="flex items-center gap-1.5 px-3 py-1 bg-[#C7F36B] hover:bg-[#d4f788] text-[#0B0C0E] text-xs font-mono font-semibold transition-colors"
         >
-          <span>View Full Meeting</span>
+          <span>Open Full Conversation</span>
           <ExternalLink className="w-3.5 h-3.5" />
         </button>
       </header>
 
       {/* Main Clip Container */}
       <main className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-2xl bg-[#17191D] border border-[#23262D] rounded-2xl shadow-2xl p-6 flex flex-col gap-4">
+        <div className="w-full max-w-2xl bg-[#121417] border border-[#1E2127] p-6 flex flex-col gap-4">
           <audio
             ref={audioRef}
             src={targetMeeting.mediaUrl}
@@ -211,20 +210,20 @@ export const ShareClipPage: React.FC = () => {
           />
 
           {/* Header Info */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#23262D] pb-3.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#1E2127] pb-3.5">
             <div>
-              <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded bg-[#101114] text-[#8B7CF6] font-semibold border border-[#8B7CF6]/30">
+              <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 bg-[#0B0C0E] text-[#C7F36B] font-semibold border border-[#C7F36B]/40">
                 HIGHLIGHT MOMENT
               </span>
-              <h1 className="text-lg font-semibold text-[#F4F3EF] mt-1.5 tracking-tight">
+              <h1 className="text-lg font-semibold text-[#F2EFE8] mt-1.5 tracking-tight">
                 {targetClip.title}
               </h1>
-              <p className="text-xs text-[#A7A9B0] mt-0.5">
-                From <span className="text-[#F4F3EF] font-medium">{targetMeeting.title}</span> • {formatDate(targetMeeting.date)}
+              <p className="text-xs text-[#969AA3] mt-0.5 font-mono">
+                {targetMeeting.title} · {formatDate(targetMeeting.date)}
               </p>
             </div>
 
-            <div className="text-xs font-mono text-[#8B7CF6] bg-[#101114] px-3 py-1 rounded-lg border border-[#8B7CF6]/25 self-start sm:self-auto">
+            <div className="text-xs font-mono text-[#C7F36B] bg-[#0B0C0E] px-2.5 py-1 border border-[#1E2127] self-start sm:self-auto">
               {formatTime(targetClip.startTime)} – {formatTime(targetClip.endTime)} ({Math.round(clipDuration)}s)
             </div>
           </div>
@@ -237,11 +236,11 @@ export const ShareClipPage: React.FC = () => {
           />
 
           {/* Player controls */}
-          <div className="bg-[#101114] border border-[#23262D] rounded-xl p-3.5 flex flex-col gap-2.5">
+          <div className="bg-[#0B0C0E] border border-[#1E2127] p-3.5 flex flex-col gap-2.5">
             {/* Progress bar */}
-            <div className="w-full h-1.5 bg-[#23262D] rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-[#121417] border border-[#1E2127] overflow-hidden">
               <div
-                className="h-full bg-[#8B7CF6] transition-[width] duration-75 shadow-[0_0_6px_#8B7CF6]"
+                className="h-full bg-[#C7F36B] transition-[width] duration-75"
                 style={{ width: `${clipProgress}%` }}
               />
             </div>
@@ -251,44 +250,47 @@ export const ShareClipPage: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 <button
                   onClick={togglePlay}
-                  className="w-9 h-9 rounded-full bg-[#8B7CF6] hover:bg-[#9D91FF] text-white flex items-center justify-center shadow-md shadow-[#8B7CF6]/25 transition-all active:scale-95"
+                  className="w-8 h-8 bg-[#C7F36B] hover:bg-[#d4f788] text-[#0B0C0E] flex items-center justify-center transition-colors"
                 >
-                  {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 ml-0.5 fill-white" />}
+                  {isPlaying ? (
+                    <Pause className="w-3.5 h-3.5 fill-current" />
+                  ) : (
+                    <Play className="w-3.5 h-3.5 ml-0.5 fill-current" />
+                  )}
                 </button>
 
                 <button
                   onClick={handleReset}
                   title="Replay clip"
-                  className="p-1.5 text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors"
+                  className="p-1.5 text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20] border border-[#1E2127] transition-colors"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-3.5 h-3.5" />
                 </button>
 
-                <span className="text-xs font-mono text-[#A7A9B0]">
+                <span className="text-xs font-mono text-[#969AA3]">
                   {formatTime(currentTime - targetClip.startTime)} / {formatTime(clipDuration)}
                 </span>
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs text-[#A7A9B0]">
-                <Volume2 className="w-4 h-4 text-[#8B7CF6]" />
-                <span>Audio Playback</span>
+              <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#969AA3]">
+                <Volume2 className="w-3.5 h-3.5 text-[#C7F36B]" />
+                <span>Synced Audio</span>
               </div>
             </div>
           </div>
 
           {/* Quote */}
           {targetClip.quote && (
-            <div className="p-3.5 rounded-xl bg-[#101114] border border-[#23262D] text-xs text-[#A7A9B0] italic flex items-start gap-2.5">
-              <Quote className="w-3.5 h-3.5 text-[#8B7CF6] flex-shrink-0 mt-0.5" />
-              <p className="leading-relaxed">"{targetClip.quote}"</p>
+            <div className="p-3 bg-[#0B0C0E] border-l-2 border-l-[#C7F36B] border border-[#1E2127] text-xs text-[#F2EFE8] leading-relaxed">
+              "{targetClip.quote}"
             </div>
           )}
         </div>
       </main>
 
       {/* Footer Branding */}
-      <footer className="py-4 text-center text-xs text-[#6F737D] border-t border-[#23262D] bg-[#101114]">
-        Captured with <span className="text-[#F4F3EF] font-semibold">Fanthom</span>. Conversation intelligence workspace.
+      <footer className="py-3.5 text-center text-[11px] font-mono text-[#5E626B] border-t border-[#1E2127] bg-[#0B0C0E]">
+        FANTHOM — Conversation OS
       </footer>
     </div>
   );

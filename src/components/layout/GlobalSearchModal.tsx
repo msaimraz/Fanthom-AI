@@ -2,12 +2,11 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Search,
-  Layers,
-  CheckSquare,
   Play,
   ArrowRight,
   X,
   Loader2,
+  CheckSquare,
 } from 'lucide-react';
 import { useMeetingsStore } from '../../store/useMeetingsStore';
 import {
@@ -172,126 +171,114 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     results.actionItems.length > 0;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start justify-center pt-16 px-4 select-none animate-in fade-in duration-100">
-      <div className="w-full max-w-2xl bg-[#17191D] border border-[#23262D] rounded-2xl shadow-2xl shadow-black/80 overflow-hidden flex flex-col max-h-[78vh] animate-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 bg-black/85 flex items-start justify-center pt-16 px-4 select-none">
+      <div className="w-full max-w-2xl bg-[#121417] border border-[#272B33] overflow-hidden flex flex-col max-h-[78vh]">
+        {/* Fanthom Command Top Bar */}
+        <div className="px-4 py-2 bg-[#0B0C0E] border-b border-[#1E2127] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-[#C7F36B]" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-[#C7F36B] font-semibold">
+              Fanthom Command
+            </span>
+          </div>
+          <span className="text-[10px] font-mono text-[#969AA3]">
+            Find across conversations, speakers, decisions & timestamps
+          </span>
+        </div>
+
         {/* Search Input Bar */}
-        <div className="p-4 border-b border-[#23262D] flex items-center gap-3 bg-[#17191D]">
-          <Search className="w-4 h-4 text-[#8B7CF6] flex-shrink-0" />
+        <div className="p-4 border-b border-[#1E2127] flex items-center gap-3 bg-[#121417]">
+          <Search className="w-4 h-4 text-[#C7F36B] flex-shrink-0" />
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search meetings, transcript statements, action items..."
+            placeholder="Search meetings, transcript statements, decisions, follow-ups..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm text-[#F4F3EF] placeholder-[#6F737D] focus:outline-none"
+            className="flex-1 bg-transparent text-sm text-[#F2EFE8] placeholder-[#5E626B] focus:outline-none"
           />
           {isSearchingDb && (
-            <Loader2 className="w-3.5 h-3.5 text-[#8B7CF6] animate-spin flex-shrink-0" />
+            <Loader2 className="w-3.5 h-3.5 text-[#C7F36B] animate-spin flex-shrink-0" />
           )}
           {query && (
             <button
               onClick={() => setQuery('')}
-              className="p-1 text-[#6F737D] hover:text-[#F4F3EF] rounded text-xs font-mono"
+              className="px-1.5 py-0.5 text-[#969AA3] hover:text-[#F2EFE8] text-[11px] font-mono border border-[#1E2127]"
             >
               Clear
             </button>
           )}
           <button
             onClick={onClose}
-            className="p-1 text-[#A7A9B0] hover:text-[#F4F3EF] rounded-lg hover:bg-[#1D2025] transition-colors"
+            className="p-1 text-[#969AA3] hover:text-[#F2EFE8] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Results Container */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-5">
           {query.trim() === '' ? (
-            <div className="py-10 text-center text-xs text-[#6F737D] space-y-3">
-              <p className="text-[#A7A9B0]">Search across spoken transcript utterances, meeting titles, and follow-up items.</p>
-              <div className="flex items-center justify-center gap-2 text-[11px] text-[#A7A9B0] flex-wrap">
-                <span>Try searching:</span>
-                <button
-                  onClick={() => setQuery('latency')}
-                  className="px-2.5 py-1 rounded-md bg-[#101114] hover:bg-[#1D2025] text-[#8B7CF6] font-mono border border-[#23262D] transition-colors"
-                >
-                  "latency"
-                </button>
-                <button
-                  onClick={() => setQuery('SOC2')}
-                  className="px-2.5 py-1 rounded-md bg-[#101114] hover:bg-[#1D2025] text-[#8B7CF6] font-mono border border-[#23262D] transition-colors"
-                >
-                  "SOC2"
-                </button>
-                <button
-                  onClick={() => setQuery('Redis')}
-                  className="px-2.5 py-1 rounded-md bg-[#101114] hover:bg-[#1D2025] text-[#8B7CF6] font-mono border border-[#23262D] transition-colors"
-                >
-                  "Redis"
-                </button>
+            <div className="py-8 text-center text-xs text-[#969AA3] space-y-3">
+              <p className="text-[#F2EFE8] font-medium">
+                Jump directly to any spoken moment, decision, question, or follow-up.
+              </p>
+              <div className="flex items-center justify-center gap-2 text-[11px] text-[#969AA3] flex-wrap font-mono">
+                <span className="text-[#5E626B]">QUERY:</span>
+                {['latency', 'SOC2', 'Redis', 'roadmap'].map((term) => (
+                  <button
+                    key={term}
+                    onClick={() => setQuery(term)}
+                    className="px-2.5 py-1 bg-[#0B0C0E] hover:bg-[#191C20] text-[#C7F36B] border border-[#1E2127] transition-colors"
+                  >
+                    {term}
+                  </button>
+                ))}
               </div>
             </div>
           ) : !hasResults ? (
-            <div className="py-16 text-center text-xs text-[#6F737D]">
-              No results found for "{query}".
+            <div className="py-14 text-center text-xs text-[#969AA3] font-mono">
+              No matching moments found for "{query}".
             </div>
           ) : (
             <>
-              {/* Meetings results */}
-              {results.meetings.length > 0 && (
-                <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono mb-2 block">
-                    Conversations
-                  </span>
-                  <div className="space-y-1.5">
-                    {results.meetings.map((m) => (
-                      <div
-                        key={m.id}
-                        onClick={() => handleSelectMeeting(m.id)}
-                        className="p-2.5 rounded-lg hover:bg-[#1D2025] cursor-pointer flex items-center justify-between group transition-colors border border-transparent hover:border-[#23262D]"
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <Layers className="w-4 h-4 text-[#8B7CF6] flex-shrink-0" />
-                          <span className="text-xs font-semibold text-[#F4F3EF] group-hover:text-[#8B7CF6] truncate">
-                            {m.title}
-                          </span>
-                        </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-[#6F737D] group-hover:text-[#8B7CF6] group-hover:translate-x-0.5 transition-all" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Transcript moments */}
+              {/* Transcript Moments (Primary — shows Meeting, Speaker, Timestamp, Matching Text) */}
               {results.transcriptMoments.length > 0 && (
                 <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono mb-2 block">
-                    Spoken Transcript Moments (Deep-Linkable)
-                  </span>
-                  <div className="space-y-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-[#969AA3]">
+                      Transcript Moments ({results.transcriptMoments.length})
+                    </span>
+                    <span className="text-[10px] font-mono text-[#5E626B]">
+                      Click to open & seek audio
+                    </span>
+                  </div>
+                  <div className="divide-y divide-[#1E2127] border border-[#1E2127]">
                     {results.transcriptMoments.map((mom, idx) => (
                       <div
                         key={idx}
                         onClick={() => handleSelectMoment(mom.meetingId, mom.timestamp)}
-                        className="p-2.5 rounded-lg bg-[#0d0e13] bg-[#101114] hover:bg-[#1D2025] border border-[#23262D] hover:border-[#8B7CF6]/40 cursor-pointer flex flex-col gap-1.5 group transition-colors"
+                        className="p-2.5 rounded-lg bg-[#0d0e13] bg-[#0B0C0E] hover:bg-[#191C20] cursor-pointer flex flex-col gap-1.5 group transition-colors"
                       >
-                        <div className="flex items-center justify-between text-[11px]">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-[#8B7CF6]">
+                        <div className="flex items-center justify-between text-[11px] gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="font-mono text-[10px] px-1.5 py-0.5 bg-[#121417] text-[#C7F36B] border border-[#1E2127] flex-shrink-0">
+                              {formatTime(mom.timestamp)}
+                            </span>
+                            <span className="font-semibold text-[#F2EFE8] flex-shrink-0">
                               {mom.speakerName}
                             </span>
-                            <span className="text-[#6F737D]">•</span>
-                            <span className="text-[#A7A9B0] truncate max-w-[220px]">
+                            <span className="text-[#5E626B]">—</span>
+                            <span className="text-[#969AA3] truncate font-mono text-[11px]">
                               {mom.meetingTitle}
                             </span>
                           </div>
-                          <span className="flex items-center gap-1 font-mono text-[#A7A9B0] px-2 py-0.5 bg-[#17191D] rounded group-hover:bg-[#8B7CF6] group-hover:text-white transition-colors font-medium text-[10px]">
+                          <span className="flex items-center gap-1 font-mono text-[#969AA3] group-hover:text-[#C7F36B] transition-colors text-[10px] flex-shrink-0">
                             <Play className="w-2.5 h-2.5 fill-current" />
-                            {formatTime(mom.timestamp)}
+                            <span>Seek</span>
                           </span>
                         </div>
-                        <p className="text-xs text-[#F4F3EF] line-clamp-1 italic leading-relaxed">
+                        <p className="text-xs text-[#F2EFE8] line-clamp-1 leading-relaxed pl-1 border-l border-[#272B33] group-hover:border-[#C7F36B]">
                           "{mom.text}"
                         </p>
                       </div>
@@ -300,30 +287,53 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                 </div>
               )}
 
-              {/* Action items */}
+              {/* Conversations */}
+              {results.meetings.length > 0 && (
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-[#969AA3] mb-2 block">
+                    Conversations
+                  </span>
+                  <div className="divide-y divide-[#1E2127] border border-[#1E2127]">
+                    {results.meetings.map((m) => (
+                      <div
+                        key={m.id}
+                        onClick={() => handleSelectMeeting(m.id)}
+                        className="p-2.5 bg-[#0B0C0E] hover:bg-[#191C20] cursor-pointer flex items-center justify-between group transition-colors"
+                      >
+                        <span className="text-xs font-medium text-[#F2EFE8] group-hover:text-[#C7F36B] truncate">
+                          {m.title}
+                        </span>
+                        <ArrowRight className="w-3.5 h-3.5 text-[#969AA3] group-hover:text-[#C7F36B] transition-colors" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Follow-up Items */}
               {results.actionItems.length > 0 && (
                 <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6F737D] font-mono mb-2 block">
-                    Follow-up Items
+                  <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-[#969AA3] mb-2 block">
+                    Follow-ups
                   </span>
-                  <div className="space-y-1.5">
+                  <div className="divide-y divide-[#1E2127] border border-[#1E2127]">
                     {results.actionItems.map((act, idx) => (
                       <div
                         key={idx}
                         onClick={() => handleSelectMoment(act.meetingId, act.timestamp)}
-                        className="p-2.5 rounded-lg hover:bg-[#1D2025] cursor-pointer flex items-center justify-between group transition-colors border border-transparent hover:border-[#23262D]"
+                        className="p-2.5 bg-[#0B0C0E] hover:bg-[#191C20] cursor-pointer flex items-center justify-between group transition-colors"
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <CheckSquare className="w-4 h-4 text-[#55C89A] flex-shrink-0" />
+                          <CheckSquare className="w-3.5 h-3.5 text-[#47D18C] flex-shrink-0" />
                           <span
                             className={`text-xs truncate ${
-                              act.completed ? 'line-through text-[#6F737D]' : 'text-[#F4F3EF]'
+                              act.completed ? 'line-through text-[#5E626B]' : 'text-[#F2EFE8]'
                             }`}
                           >
                             {act.text}
                           </span>
                         </div>
-                        <span className="text-[10px] font-mono text-[#6F737D]">
+                        <span className="text-[10px] font-mono text-[#C7F36B]">
                           [{formatTime(act.timestamp)}]
                         </span>
                       </div>
@@ -336,16 +346,17 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-3 border-t border-[#23262D] bg-[#101114] flex items-center justify-between text-xs text-[#6F737D]">
-          <span>Click any moment to jump directly to that second in the call.</span>
-          <div className="flex items-center gap-2">
-            <kbd className="px-2 py-0.5 rounded bg-[#17191D] text-[#A7A9B0] font-mono text-[10px] border border-[#23262D]">
+        <div className="px-4 py-2.5 border-t border-[#1E2127] bg-[#0B0C0E] flex items-center justify-between text-[11px] font-mono text-[#969AA3]">
+          <span>Select any result to open conversation & seek audio</span>
+          <div className="flex items-center gap-1.5">
+            <kbd className="px-1.5 py-0.5 bg-[#121417] text-[#969AA3] text-[10px] border border-[#1E2127]">
               ESC
             </kbd>
-            <span>to close</span>
+            <span>close</span>
           </div>
         </div>
       </div>
     </div>
   );
 };
+

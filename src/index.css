@@ -2,52 +2,56 @@
 
 @layer base {
   :root {
-    --bg-primary: #101114;
-    --bg-surface: #17191D;
-    --bg-surface-hover: #1D2025;
-    --bg-elevated: #1D2025;
-    --border-subtle: #23262D;
-    --border-strong: #2C3039;
-    --accent-iris: #8B7CF6;
-    --accent-iris-hover: #9D91FF;
-    --text-primary: #F4F3EF;
-    --text-secondary: #A7A9B0;
-    --text-muted: #6F737D;
+    --bg-primary: #0B0C0E;
+    --bg-surface: #121417;
+    --bg-surface-hover: #191C20;
+    --bg-elevated: #191C20;
+    --border-subtle: #1E2127;
+    --border-strong: #272B33;
+    --accent-lime: #C7F36B;
+    --semantic-question: #5BA3F5;
+    --semantic-decision: #F0B449;
+    --semantic-action: #47D18C;
+    --semantic-risk: #F26464;
+    --text-primary: #F2EFE8;
+    --text-secondary: #969AA3;
+    --text-muted: #5E626B;
   }
 
   * {
-    border-color: #23262D;
+    border-color: #1E2127;
   }
-  
+
   body {
-    background-color: #101114;
-    color: #F4F3EF;
+    background-color: #0B0C0E;
+    color: #F2EFE8;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
   }
 }
 
-/* Custom sleek scrollbar for Fanthom editorial workspace */
+/* Crisp architectural scrollbar for Fanthom Conversation OS */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #0B0C0E;
 }
 ::-webkit-scrollbar-thumb {
-  background: #262930;
-  border-radius: 9999px;
+  background: #272B33;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #363A45;
+  background: #3A404C;
 }
 
-/* Range input styling for volume and audio scrubber */
+/* Range input styling for audio scrubber and trim controls */
 input[type="range"] {
-  accent-color: #8B7CF6;
+  accent-color: #C7F36B;
 }
 

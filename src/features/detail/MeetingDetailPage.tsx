@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import {
-  FileText,
-  Sparkles,
-  CheckSquare,
-  Scissors,
-  Clock,
   ArrowLeft,
-  Calendar,
   Loader2,
   AlertCircle,
   RotateCcw,
@@ -21,6 +15,7 @@ import { ActionItemsView } from '../actions/ActionItemsView';
 import { ClipsView } from '../clips/ClipsView';
 import { CreateClipModal } from '../clips/CreateClipModal';
 import { ShareClipModal } from '../clips/ShareClipModal';
+import { ConversationMap } from './ConversationMap';
 import { Clip } from '../../types';
 import { formatDate, formatDuration } from '../../utils/formatters';
 
@@ -81,10 +76,12 @@ export const MeetingDetailPage: React.FC = () => {
   if (isLoading && !meeting) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-24 text-center flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-7 h-7 text-[#8B7CF6] animate-spin" />
-        <h2 className="text-sm font-semibold text-[#F4F3EF]">Loading meeting insights...</h2>
-        <p className="text-xs text-[#A7A9B0]">
-          Loading transcript, AI summary, and follow-up items from workspace database...
+        <Loader2 className="w-6 h-6 text-[#C7F36B] animate-spin" />
+        <h2 className="text-sm font-mono uppercase tracking-wider text-[#F2EFE8]">
+          Loading conversation workspace...
+        </h2>
+        <p className="text-xs text-[#969AA3]">
+          Retrieving transcript, conversation map, decisions, and follow-ups from database.
         </p>
       </div>
     );
@@ -93,24 +90,23 @@ export const MeetingDetailPage: React.FC = () => {
   if (error && !meeting) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-20 text-center flex flex-col items-center justify-center gap-3">
-        <AlertCircle className="w-8 h-8 text-rose-400" />
-        <h2 className="text-base font-bold text-[#F4F3EF]">Unable to load this meeting.</h2>
-        <p className="text-xs text-[#A7A9B0] max-w-md">
-          There was a problem retrieving this meeting from the database.
-        </p>
+        <AlertCircle className="w-7 h-7 text-[#F26464]" />
+        <h2 className="text-base font-semibold text-[#F2EFE8]">
+          Unable to load this conversation.
+        </h2>
         <div className="flex items-center gap-2 mt-2">
           <button
             onClick={() => loadWorkspaceData()}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#8B7CF6] hover:bg-[#9D91FF] text-white text-xs font-semibold rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-4 py-1.5 bg-[#C7F36B] text-[#0B0C0E] text-xs font-mono font-semibold"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Retry</span>
           </button>
           <button
             onClick={() => navigate('/meetings')}
-            className="px-4 py-2 bg-[#17191D] hover:bg-[#1D2025] text-[#F4F3EF] border border-[#23262D] text-xs font-medium rounded-lg transition-colors"
+            className="px-4 py-1.5 bg-[#121417] text-[#F2EFE8] border border-[#1E2127] text-xs font-mono"
           >
-            Return to Library
+            Return to Timeline
           </button>
         </div>
       </div>
@@ -120,15 +116,15 @@ export const MeetingDetailPage: React.FC = () => {
   if (!meeting) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-20 text-center">
-        <h2 className="text-lg font-bold text-[#F4F3EF] mb-2">Meeting Not Found</h2>
-        <p className="text-xs text-[#A7A9B0] mb-6">
-          The requested recording does not exist or has been removed.
+        <h2 className="text-lg font-semibold text-[#F2EFE8] mb-2">Conversation Not Found</h2>
+        <p className="text-xs text-[#969AA3] mb-6">
+          The requested conversation record does not exist in this workspace.
         </p>
         <button
           onClick={() => navigate('/meetings')}
-          className="px-4 py-2 bg-[#8B7CF6] hover:bg-[#9D91FF] text-white text-xs font-semibold rounded-lg transition-colors"
+          className="px-4 py-1.5 bg-[#C7F36B] text-[#0B0C0E] text-xs font-mono font-semibold"
         >
-          Return to Library
+          Return to Timeline
         </button>
       </div>
     );
@@ -137,141 +133,125 @@ export const MeetingDetailPage: React.FC = () => {
   const pendingActions = meeting.actionItems.filter((a) => !a.completed).length;
 
   return (
-    <div className="h-[calc(100vh-3.5rem)] flex flex-col overflow-hidden bg-[#101114]">
+    <div className="h-[calc(100vh-3rem)] flex flex-col overflow-hidden bg-[#0B0C0E]">
       {mutationError && (
-        <div className="px-5 py-2 bg-rose-500/10 border-b border-rose-500/30 flex items-center justify-between text-xs text-rose-300">
+        <div className="px-5 py-2 bg-[#F26464]/10 border-b border-[#F26464]/40 flex items-center justify-between text-xs text-[#F26464] font-mono">
           <span>{mutationError}</span>
           <button
             onClick={clearMutationError}
-            className="text-[11px] font-mono underline hover:text-white"
+            className="text-[11px] underline hover:text-[#F2EFE8]"
           >
             Dismiss
           </button>
         </div>
       )}
-      {/* Meeting Header Bar */}
-      <div className="px-5 py-3 border-b border-[#23262D] bg-[#17191D]/95 backdrop-blur-md flex-shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+
+      {/* Architectural Meeting Header Bar */}
+      <div className="px-5 py-2.5 border-b border-[#1E2127] bg-[#121417] flex-shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => navigate('/meetings')}
-            className="p-1.5 text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025] rounded-lg transition-colors border border-transparent hover:border-[#23262D]"
-            title="Back to meetings library"
+            className="p-1.5 text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20] border border-[#1E2127] transition-colors flex-shrink-0"
+            title="Back to conversation timeline"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-3.5 h-3.5" />
           </button>
 
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-sm md:text-base font-semibold text-[#F4F3EF] tracking-tight">
+              <h1 className="text-sm md:text-base font-semibold text-[#F2EFE8] tracking-tight truncate">
                 {meeting.title}
               </h1>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-[#1D2025] text-[#8B7CF6] border border-[#8B7CF6]/25 font-mono font-medium uppercase">
+              <span className="text-[10px] px-1.5 py-0.5 bg-[#0B0C0E] text-[#C7F36B] border border-[#C7F36B]/40 font-mono uppercase">
                 {meeting.category}
               </span>
             </div>
 
-            {/* Sub-metadata */}
-            <div className="flex items-center gap-3 text-[11px] text-[#A7A9B0] mt-1">
-              <span className="flex items-center gap-1.5 font-mono">
-                <Calendar className="w-3.5 h-3.5 text-[#6F737D]" />
-                {formatDate(meeting.date)}
+            {/* Tabular Sub-metadata */}
+            <div className="flex items-center gap-3 text-[11px] text-[#969AA3] font-mono mt-0.5">
+              <span>{formatDate(meeting.date)}</span>
+              <span className="text-[#5E626B]">·</span>
+              <span>{formatDuration(meeting.durationSeconds)}</span>
+              <span className="hidden sm:inline text-[#5E626B]">·</span>
+              <span className="hidden sm:inline text-[#F2EFE8]">
+                {meeting.participants.map((p) => p.name).join(', ')}
               </span>
-              <span className="flex items-center gap-1.5 font-mono">
-                <Clock className="w-3.5 h-3.5 text-[#6F737D]" />
-                {formatDuration(meeting.durationSeconds)}
-              </span>
-              <span className="hidden sm:inline text-[#6F737D]">•</span>
-              <div className="hidden sm:flex items-center gap-2">
-                <div className="flex -space-x-2">
-                  {meeting.participants.map((p) => (
-                    <img
-                      key={p.id}
-                      src={p.avatarUrl}
-                      alt={p.name}
-                      title={`${p.name} (${p.company})`}
-                      className="w-4.5 h-4.5 rounded-full border-2 border-[#17191D] object-cover"
-                    />
-                  ))}
-                </div>
-                <span className="text-[#A7A9B0] font-medium">
-                  {meeting.participants.map((p) => p.name.split(' ')[0]).join(', ')}
-                </span>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Tab Switcher */}
-        <div className="flex items-center gap-1 bg-[#101114] p-1 rounded-lg border border-[#23262D] overflow-x-auto">
+        {/* Right Mode Switcher (Product-oriented labels preserving QA selectors) */}
+        <div className="flex items-center gap-1 bg-[#0B0C0E] p-1 border border-[#1E2127] overflow-x-auto font-mono">
           <button
             onClick={() => setActiveTab('transcript')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs transition-colors ${
               activeTab === 'transcript'
-                ? 'bg-[#8B7CF6] text-white font-semibold shadow-sm'
-                : 'text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025]'
+                ? 'bg-[#C7F36B] text-[#0B0C0E] font-semibold'
+                : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]'
             }`}
           >
-            <FileText className="w-3.5 h-3.5" />
             <span>Transcript</span>
-            <span className="text-[10px] font-mono px-1 rounded bg-black/25">
-              {meeting.transcript.length}
+            <span className="text-[10px] opacity-80">
+              [{meeting.transcript.length}]
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('summary')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs transition-colors ${
               activeTab === 'summary'
-                ? 'bg-[#8B7CF6] text-white font-semibold shadow-sm'
-                : 'text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025]'
+                ? 'bg-[#C7F36B] text-[#0B0C0E] font-semibold'
+                : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
             <span>Summary</span>
           </button>
 
           <button
             onClick={() => setActiveTab('actions')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs transition-colors ${
               activeTab === 'actions'
-                ? 'bg-[#8B7CF6] text-white font-semibold shadow-sm'
-                : 'text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025]'
+                ? 'bg-[#C7F36B] text-[#0B0C0E] font-semibold'
+                : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]'
             }`}
           >
-            <CheckSquare className="w-3.5 h-3.5" />
-            <span>Tasks</span>
+            <span>Follow-ups / Tasks</span>
             {pendingActions > 0 && (
-              <span className="text-[10px] font-mono px-1 rounded bg-black/25 font-semibold">
-                {pendingActions}
+              <span className="text-[10px] opacity-90">
+                [{pendingActions}]
               </span>
             )}
           </button>
 
           <button
             onClick={() => setActiveTab('clips')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs transition-colors ${
               activeTab === 'clips'
-                ? 'bg-[#8B7CF6] text-white font-semibold shadow-sm'
-                : 'text-[#A7A9B0] hover:text-[#F4F3EF] hover:bg-[#1D2025]'
+                ? 'bg-[#C7F36B] text-[#0B0C0E] font-semibold'
+                : 'text-[#969AA3] hover:text-[#F2EFE8] hover:bg-[#191C20]'
             }`}
           >
-            <Scissors className="w-3.5 h-3.5" />
-            <span>Clips</span>
-            <span className="text-[10px] font-mono px-1 rounded bg-black/25">
-              {meeting.clips.length}
+            <span>Highlights / Clips</span>
+            <span className="text-[10px] opacity-80">
+              [{meeting.clips.length}]
             </span>
           </button>
         </div>
       </div>
 
-      {/* Main Split Body */}
-      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-4 p-4">
-        {/* Left Column: Media Player (5 cols on lg) */}
+      {/* Signature Conversation Map (Always visible above workspace split) */}
+      <div className="px-4 pt-3 flex-shrink-0">
+        <ConversationMap meeting={meeting} />
+      </div>
+
+      {/* Main Split Workspace */}
+      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-3 p-4 pt-3">
+        {/* Left Column: Audio & Speaker Monitor (5 cols on lg) */}
         <div className="lg:col-span-5 flex flex-col justify-start overflow-y-auto">
           <MediaPlayer meeting={meeting} />
         </div>
 
-        {/* Right Column: Tab View (7 cols on lg) */}
+        {/* Right Column: Active Analysis Surface (7 cols on lg) */}
         <div className="lg:col-span-7 h-full min-h-0 flex flex-col">
           {activeTab === 'transcript' && <TranscriptView meeting={meeting} />}
           {activeTab === 'summary' && <SummaryView meeting={meeting} />}
@@ -301,3 +281,4 @@ export const MeetingDetailPage: React.FC = () => {
     </div>
   );
 };
+
